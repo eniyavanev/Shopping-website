@@ -1,11 +1,25 @@
 const Product = require("../models/productModel.js");
 const asyncHandler = require("express-async-handler");
 const ApiFeautures = require("../../Utils/apiFeautures.js");
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 //Create product
 //POST - /api/products/create
 
 const createProduct = asyncHandler(async (req, res) => {
+  let images = [];
+  if (req.files.length > 0) {
+      req.files.forEach((file) => {
+        let url = `${process.env.BACKEND_URL}/uploads/products/${file.filename}`;
+        images.push({ image:url });
+      })
+  } 
+    
+  
+// images filed ku images array ah asign panrom
+  req.body.images = images;
   req.body.user = req.user.id; // user id add pannanum ithu token la irunthu id ah access panrom
   const product = await Product.create(req.body);
 
@@ -154,7 +168,10 @@ const createProductReview = asyncHandler(async (req, res, next) => {
 // @route GET /api/products/reviews
 // @access Public
 const getSingleProductReviews = asyncHandler(async (req, res, next) => {
-  const product = await Product.findById(req.query.id);
+  const product = await Product.findById(req.query.id).populate({
+    path: "reviews.user",
+    select: "name avatar",
+  });
   if (!product) {
     return res
       .status(404)
@@ -207,6 +224,16 @@ const deleteReview = asyncHandler(async (req, res, next) => {
   });
 });
 
+//@desc get Admin All Products
+// @route GET /api/admin/products
+// @access Admin
+const getProductsAdmin = asyncHandler(async (req, res, next) => {
+  const products = await Product.find();
+  res
+    .status(200)
+    .json({ success: true, message: "Products fetched successfully", products });
+});
+
 //Export
 module.exports = {
   createProduct,
@@ -217,4 +244,5 @@ module.exports = {
   createProductReview,
   getSingleProductReviews,
   deleteReview,
+  getProductsAdmin,
 };

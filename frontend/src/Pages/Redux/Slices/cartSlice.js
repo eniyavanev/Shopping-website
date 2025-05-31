@@ -29,7 +29,7 @@ const calculatePrices = (cart) => {
   } else {
     // 💰 Calculate subtotal
     cart.itemsPrice = cart.items.reduce(
-      (acc, item) => acc + item.price * item.qty,
+      (acc, item) => acc + item.price * item.quantity,
       0
     );
 
@@ -84,7 +84,7 @@ const cartSlice = createSlice({
     increaseQty: (state, action) => {
       const item = state.cart.items.find((x) => x._id === action.payload);
       if (item) {
-        item.qty += 1;
+        item.quantity += 1;
       }
       calculatePrices(state.cart);
     },
@@ -92,8 +92,8 @@ const cartSlice = createSlice({
     // 🔻 Decrease quantity (minimum 1)
     decreaseQty: (state, action) => {
       const item = state.cart.items.find((x) => x._id === action.payload);
-      if (item && item.qty > 1) {
-        item.qty -= 1;
+      if (item && item.quantity > 1) {
+        item.quantity -= 1;
       }
       calculatePrices(state.cart);
     },

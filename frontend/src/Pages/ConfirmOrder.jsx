@@ -2,7 +2,7 @@ import React, { use } from "react";
 import CheckoutStepper from "../Components/Stepper/CheckoutStepper";
 import usePageTitle from "../Components/customHooks/PageTitle";
 import { useSelector } from "react-redux";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const ConfirmOrder = () => {
   usePageTitle("Confirm Order");
@@ -11,46 +11,28 @@ const ConfirmOrder = () => {
     useSelector((state) => state.cart.cart);
   const user = useSelector((state) => state.protectRoute.user);
   //console.log("shippingInfo", shippingInfo);
-const navigate = useNavigate();
-  const cartItems = [
-    {
-      id: 1,
-      name: "Nike Shoes",
-      image: "https://via.placeholder.com/80",
-      quantity: 2,
-      price: 2999,
-    },
-    {
-      id: 2,
-      name: "Water Bottle",
-      image: "https://via.placeholder.com/80",
-      quantity: 1,
-      price: 499,
-    },
-  ];
+  const navigate = useNavigate();
 
   const isShippingInfoValid =
-    shippingInfo.phone &&
+    shippingInfo.phoneNo &&
     shippingInfo.address &&
     shippingInfo.city &&
     shippingInfo.state &&
     shippingInfo.country &&
-    shippingInfo.postalCode;
+    shippingInfo.pinCode;
 
   const handleProceedToPayment = () => {
     if (!isShippingInfoValid) {
       alert("Shipping information is missing. Please fill in all the details.");
       return;
     }
-const data = {
- 
-
-  itemsPrice,
-  shippingPrice,
-  taxPrice,
-  totalPrice,
-};
-   sessionStorage.setItem("orderData", JSON.stringify(data)); 
+    const data = {
+      itemsPrice,
+      shippingPrice,
+      taxPrice,
+      totalPrice,
+    };
+    sessionStorage.setItem("orderData", JSON.stringify(data));
 
     navigate("/ProtectedRoutes/Payment");
   };
@@ -84,7 +66,7 @@ const data = {
                 </p>
                 <p>
                   <span className="font-medium">Phone:</span>{" "}
-                  {shippingInfo.phone || "Not provided"}
+                  {shippingInfo.phoneNo || "Not provided"}
                 </p>
 
                 <p>
@@ -93,7 +75,7 @@ const data = {
                     shippingInfo.city || "Not provided"
                   }, ${shippingInfo.state || "Not provided"}, ${
                     shippingInfo.country || "Not provided"
-                  } - ${shippingInfo.postalCode || "Not provided"}`}
+                  } - ${shippingInfo.pinCode || "Not provided"}`}
                 </p>
               </div>
 
@@ -102,11 +84,8 @@ const data = {
               </h3>
               <div className="space-y-4">
                 {items.map((item) => (
-                  <Link to={`/productDetails/${item._id}`}  key={item._id}>
-                    <div
-                     
-                      className="flex items-center gap-4 p-3 mb-3 border rounded-md bg-gray-50"
-                    >
+                  <Link to={`/productDetails/${item._id}`} key={item._id}>
+                    <div className="flex items-center gap-4 p-3 mb-3 border rounded-md bg-gray-50">
                       <img
                         src={item.image}
                         alt={item.name}
@@ -115,7 +94,8 @@ const data = {
                       <div className="flex-1">
                         <p className="font-medium">{item.name}</p>
                         <p className="text-sm text-gray-600">
-                          {item.qty} × ₹{item.price} = ₹{item.qty * item.price}
+                          {item.quantity} × ₹{item.price} = ₹
+                          {item.quantity * item.price}
                         </p>
                       </div>
                     </div>

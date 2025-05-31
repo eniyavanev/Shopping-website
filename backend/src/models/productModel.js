@@ -52,7 +52,7 @@ const productSchema = new mongoose.Schema(
           "Beauty/Health",
           "Sports",
           "Outdoor",
-          "Home Appliances",
+          "HomeAppliances",
         ],
         message: "Please select correct category for this product",
       },
@@ -76,7 +76,11 @@ const productSchema = new mongoose.Schema(
     reviews: [
       // all reviews
       {
-        user: mongoose.Schema.Types.ObjectId,
+        user:{
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+          ref: "User",
+        },
         rating: {
           type: Number,
           required: true,
@@ -84,6 +88,10 @@ const productSchema = new mongoose.Schema(
         comment: {
           type: String,
           required: true,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
         },
       },
     ],

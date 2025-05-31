@@ -11,9 +11,9 @@ export const validateShippingForm = (formData) => {
     formData.address.trim() === "" ||
     formData.city.trim() === "" ||
     formData.state.trim() === "" ||
-    formData.postalCode.trim() === "" ||
+    formData.pinCode.trim() === "" ||
     formData.country.trim() === "" ||
-    formData.phone.trim() === ""
+    formData.phoneNo.trim() === ""
   ) {
     toast.error("Please fill in all the shipping details!");
     return false;
@@ -30,9 +30,9 @@ const Shipping = () => {
     address: "",
     city: "",
     state: "",
-    postalCode: "",
+    pinCode: "",
     country: "",
-    phone: "",
+    phoneNo: "",
   });
 
   const countryList = Object.entries(countries).map(([code, { name }]) => ({
@@ -46,9 +46,9 @@ const Shipping = () => {
         address: shippingInfo.address || "",
         city: shippingInfo.city || "",
         state: shippingInfo.state || "",
-        postalCode: shippingInfo.postalCode || "",
+        pinCode: shippingInfo.pinCode || "",
         country: shippingInfo.country || "",
-        phone: shippingInfo.phone || "",
+        phoneNo: shippingInfo.phoneNo || "",
       });
     }
   }, [shippingInfo]);
@@ -131,8 +131,8 @@ const Shipping = () => {
               </label>
               <input
                 type="text"
-                name="postalCode"
-                value={formData.postalCode}
+                name="pinCode"
+                value={formData.pinCode}
                 onChange={handleChange}
                 placeholder="600001"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -164,8 +164,8 @@ const Shipping = () => {
               </label>
               <input
                 type="tel"
-                name="phone"
-                value={formData.phone}
+                name="phoneNo"
+                value={formData.phoneNo}
                 onChange={handleChange}
                 placeholder="+91 98765 43210"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"

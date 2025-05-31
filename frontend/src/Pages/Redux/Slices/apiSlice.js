@@ -5,5 +5,6 @@ const baseQuery = fetchBaseQuery({ baseUrl: BASE_URL, credentials: "include" });
 export const apiSlice = createApi({
   // reducerPath:"apiSlice",
   baseQuery,
+   tagTypes: ['Review','Product'], // // Review data automatic refresh panna enable pannu
   endpoints: (builder) => ({}),
 });

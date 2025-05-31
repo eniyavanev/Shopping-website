@@ -10,6 +10,13 @@ const RESETPASSWORD = "/auth/reset";
 const PROCESSPAYMENT = "/payment/process";
 const GETSTRIPEAPIKEY = "/payment/stripeapikey";
 const CREATEORDER = "/orders/create";
+const GETMYORDERS = "/orders/myOrders";
+const GETSINGLEORDER = "/orders/get";
+const CREATEREVIEW = '/products/review';
+
+// admin
+const GET_PRODUCTS_ADMIN = '/products/admin/products';
+const CREATE_PRODUCT = '/products/admin/create';
 export {
   BASE_URL,
   GET_PRODUCTS,
@@ -23,4 +30,9 @@ export {
   PROCESSPAYMENT,
   GETSTRIPEAPIKEY,
   CREATEORDER,
+  GETMYORDERS,
+  GETSINGLEORDER,
+  CREATEREVIEW,
+  GET_PRODUCTS_ADMIN,
+  CREATE_PRODUCT
 };

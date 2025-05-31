@@ -8,6 +8,12 @@ import store from "./Pages/Redux/Store/Store.js";
 import { Provider } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 
+//mdb ui styles
+
+
+
+
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>

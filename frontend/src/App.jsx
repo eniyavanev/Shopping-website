@@ -23,12 +23,20 @@ import { useGetStripeApiKeyQuery } from "./Pages/Redux/Slices/apiPaymentSlice";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import OrderSuccess from "./Pages/OrderSuccess";
+import Wishlist from "./Pages/WishList";
+import UserOrders from "./Pages/UserOrders/UserOrders";
+import OrderDetail from "./Pages/UserOrders/OrderDetail";
+import Dashboard from "./Pages/Admin Pages/NewProduct";
+import AdminProductList from "./Pages/Admin Pages/AdminProductList";
+import AdminLayout from "./Components/Admin/AdminLayout";
+import MainContent from "./Pages/Admin Pages/MainContent";
+import NewProduct from "./Pages/Admin Pages/NewProduct";
 
 function App() {
   const { data, isSuccess } = useGetStripeApiKeyQuery();
   const [stripeApiKey, setStripeApiKey] = useState("");
-   // console.log("stripeApiKey", stripeApiKey);
-    
+  // console.log("stripeApiKey", stripeApiKey);
+
   // Set the key only once when fetched
   useEffect(() => {
     if (isSuccess && data?.stripeApiKey) {
@@ -39,51 +47,59 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <Header />
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/Signup" element={<Signup />} />
-          <Route path="/ForgotPassword" element={<ForgotPassword />} />
-          <Route path="/ResetPassword/:token" element={<ResetPassword />} />
+          <Route path="/" element={<Main />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/Signup" element={<Signup />} />
+            <Route path="/ForgotPassword" element={<ForgotPassword />} />
+            <Route path="/ResetPassword/:token" element={<ResetPassword />} />
 
-          <Route path="/ProtectedRoutes" element={<ProtectRoute />}>
-            <Route path="/ProtectedRoutes/Profile" element={<Profile />} />
-            <Route
-              path="/ProtectedRoutes/EditProfile"
-              element={<EditProfile />}
-            />
-            <Route
-              path="/ProtectedRoutes/UpdatePassword"
-              element={<UpdatePassword />}
-            />
-            <Route path="/ProtectedRoutes/Shipping" element={<Shipping />} />
-            <Route path="/ProtectedRoutes/order/success" element={<OrderSuccess />} />
-            <Route
-              path="/ProtectedRoutes/ConfirmOrder"
-              element={<ConfirmOrder />}
-            />
+            <Route path="/ProtectedRoutes" element={<ProtectRoute />}>
+              <Route path="Profile" element={<Profile />} />
+              <Route path="EditProfile" element={<EditProfile />} />
+              <Route path="UpdatePassword" element={<UpdatePassword />} />
+              <Route path="Shipping" element={<Shipping />} />
+              <Route path="UserOrders" element={<UserOrders />} />
+              <Route path="OrderDetail/:id" element={<OrderDetail />} />
+              <Route path="order/success" element={<OrderSuccess />} />
+              <Route path="ConfirmOrder" element={<ConfirmOrder />} />
 
-            {/* Load stripe only if the key is available */}
-            <Route
-              path="/ProtectedRoutes/Payment"
-              element={
-                stripeApiKey ? (
-                  <Elements stripe={loadStripe(stripeApiKey)}>
-                    <Payment />
-                  </Elements>
-                ) : (
-                  <p>Loading payment gateway...</p>
-                )
-              }
-            />
+              {/* Load stripe only if the key is available */}
+              <Route
+                path="Payment"
+                element={
+                  stripeApiKey ? (
+                    <Elements stripe={loadStripe(stripeApiKey)}>
+                      <Payment />
+                    </Elements>
+                  ) : (
+                    <p>Loading payment gateway...</p>
+                  )
+                }
+              />
+            </Route>
+
+            <Route path="/Cart" element={<Cart />} />
+            <Route path="/Wishlist" element={<Wishlist />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/search/:keyword" element={<ProductSearch />} />
+            <Route path="/ProductDetails/:id" element={<ProductDetails />} />
           </Route>
 
-          <Route path="/Cart" element={<Cart />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/search/:keyword" element={<ProductSearch />} />
-          <Route path="/ProductDetails/:id" element={<ProductDetails />} />
+          {/* Admin protected routes */}
+          <Route
+            path="/ProtectedRoutes/Admin"
+            element={<ProtectRoute requiredRole="admin" />}
+          >
+            {" "}
+            <Route element={<AdminLayout />}>
+              <Route path="Dashboard" element={<MainContent />} />
+              <Route path="createProduct" element={<NewProduct />} />
+              <Route path="AdminProductList" element={<AdminProductList />} />
+            </Route>
+            {/* other admin routes */}
+          </Route>
         </Routes>
-        <Footer />
       </BrowserRouter>
     </>
   );

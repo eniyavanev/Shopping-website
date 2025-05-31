@@ -79,9 +79,9 @@ const Cart = () => {
                     </h3>
                   </Link>
                   <p className="text-slate-700 mt-1">
-                    ₹{item.price} x {item.qty} ={" "}
+                    ₹{item.price} x {item.quantity} ={" "}
                     <span className="font-semibold">
-                      ₹{item.price * item.qty}
+                      ₹{item.price * item.quantity}
                     </span>
                   </p>
                   <div className="flex items-center gap-3 mt-4">
@@ -91,7 +91,7 @@ const Cart = () => {
                     >
                       <Minus size={18} />
                     </button>
-                    <span className="text-lg font-medium">{item.qty}</span>
+                    <span className="text-lg font-medium">{item.quantity}</span>
                     <button
                       onClick={() => handleIncreaseQtyWithStockCheck(item._id)}
                       className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center"
@@ -112,40 +112,40 @@ const Cart = () => {
         </div>
 
         {/* Order Summary */}
-        <div className="bg-white/50 backdrop-blur-md shadow-2xl rounded-3xl p-8 border border-white/70 h-fit sticky top-10">
-          <h3 className="text-2xl font-bold text-center text-slate-800 mb-6">
-            🧾 Order Summary
-          </h3>
-
-          <div className="space-y-4 text-slate-700 text-[17px]">
-            <div className="flex justify-between">
-              <span>Items Total Price</span>
-              <span>
-                ₹{items.reduce((acc, item) => acc + item.price * item.qty, 0)}
-              </span>
+        {items.length > 0 && (
+          <div className="bg-white/50 backdrop-blur-md shadow-2xl rounded-3xl p-8 border border-white/70 h-fit sticky top-10">
+            <h3 className="text-2xl font-bold text-center text-slate-800 mb-6">
+              🧾 Order Summary
+            </h3>
+            <div className="space-y-4 text-slate-700 text-[17px]">
+              <div className="flex justify-between">
+                <span>Items Total Price</span>
+                <span>
+                  ₹{items.reduce((acc, item) => acc + item.price * item.quantity, 0)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Tax</span>
+                <span>₹{taxPrice}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Shipping</span>
+                <span>₹{shippingPrice}</span>
+              </div>
+              <hr className="border-slate-300 my-4" />
+              <div className="flex justify-between font-bold text-lg text-slate-900">
+                <span>Total</span>
+                <span>₹{totalPrice}</span>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span>Tax</span>
-              <span>₹{taxPrice}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Shipping</span>
-              <span>₹{shippingPrice}</span>
-            </div>
-            <hr className="border-slate-300 my-4" />
-            <div className="flex justify-between font-bold text-lg text-slate-900">
-              <span>Total</span>
-              <span>₹{totalPrice}</span>
-            </div>
+            <Button
+              onClick={handleCheckout}
+              className="w-full mt-8 py-3 text-lg font-semibold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white rounded-xl shadow-lg hover:shadow-xl transition"
+            >
+              🛍️ Proceed to Checkout
+            </Button>
           </div>
-
-          <Button
-            onClick={handleCheckout}
-            className="w-full mt-8 py-3 text-lg font-semibold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white rounded-xl shadow-lg hover:shadow-xl transition"
-          >
-            🛍️ Proceed to Checkout
-          </Button>
-        </div>
+        )}
       </div>
     </div>
   );

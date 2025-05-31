@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useUpdatePasswordMutation } from '../Redux/Slices/apiAuthSlice';
 import toast from 'react-hot-toast';
+import usePageTitle from '../../Components/customHooks/PageTitle';
 
 const UpdatePassword = () => {
+  usePageTitle("Update Password");
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');

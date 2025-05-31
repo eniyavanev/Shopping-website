@@ -1,8 +1,10 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import usePageTitle from "../../Components/customHooks/PageTitle";
 
 const Profile = () => {
+  usePageTitle("Profile");
   // Dummy data – replace with actual user info from Redux or props
   const user = useSelector((state) => state.protectRoute.user);
 

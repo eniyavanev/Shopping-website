@@ -6,8 +6,8 @@ import { useLogoutUserMutation } from "../../Pages/Redux/Slices/apiAuthSlice";
 import { removeUser } from "../../Pages/Redux/Slices/protectRouteSlice";
 import toast from "react-hot-toast";
 import SearchInput from "../Search/Search";
-import { IoIosArrowDown } from "react-icons/io";
-import { IoIosArrowUp } from "react-icons/io";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { FaUserCircle, FaHeart, FaSignOutAlt, FaBoxOpen, FaUserCog, FaTachometerAlt } from "react-icons/fa";
 
 const Header = () => {
   const user = useSelector((state) => state.protectRoute.user);
@@ -16,7 +16,6 @@ const Header = () => {
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-
   const [logoutUser] = useLogoutUserMutation();
 
   useEffect(() => {
@@ -41,13 +40,18 @@ const Header = () => {
     }
   };
 
-  const handleProfileClick = () => {
-    setDropdownOpen(false); // close dropdown
-    navigate("/ProtectedRoutes/profile");
+  const handleProfileClick = (route) => {
+    setDropdownOpen(false);
+    navigate(`/ProtectedRoutes/${route}`);
+  };
+
+  const handleWishlistClick = () => {
+    setDropdownOpen(false);
+    navigate("/Wishlist");
   };
 
   return (
-    <header className="bg-white shadow-md">
+    <header className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
         <Link to="/" className="text-blue-700 text-2xl font-bold">
           🛒 Eniyavan Cart
@@ -91,7 +95,7 @@ const Header = () => {
                   alt="Profile"
                   className="w-10 h-10 rounded-full border"
                 />
-                <span>{user.name || "User"}</span>
+                <span className="font-semibold">{user.name || "User"}</span>
                 {dropdownOpen ? (
                   <IoIosArrowUp size={20} />
                 ) : (
@@ -100,18 +104,42 @@ const Header = () => {
               </div>
 
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-md z-50">
+                <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-xl z-50 py-2">
+                  {user.role === "admin" && (
+                    <button
+                      onClick={() =>{navigate("/ProtectedRoutes/Admin/Dashboard");setDropdownOpen(false);}}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
+                    >
+                      <FaTachometerAlt /> Admin Dashboard
+                    </button>
+                  )}
+
                   <button
-                    onClick={handleProfileClick}
-                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                    onClick={() => handleProfileClick("profile")}
+                    className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
                   >
-                    📝 Profile
+                    <FaUserCog /> Profile
                   </button>
+
+                  <button
+                    onClick={handleWishlistClick}
+                    className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
+                  >
+                    <FaHeart /> Wishlist
+                  </button>
+
+                  <button
+                    onClick={() => handleProfileClick("UserOrders")}
+                    className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
+                  >
+                    <FaBoxOpen /> My Orders
+                  </button>
+
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+                    className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
                   >
-                    🔓 Logout
+                    <FaSignOutAlt /> Logout
                   </button>
                 </div>
               )}

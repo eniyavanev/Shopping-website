@@ -28,10 +28,10 @@ const orderSchema = new mongoose.Schema(
         required: true,
       },
     },
-    
+
     orderItems: [
       {
-        product: {
+        _id: {
           type: mongoose.SchemaTypes.ObjectId,
           ref: "Product",
           required: true,
@@ -48,10 +48,14 @@ const orderSchema = new mongoose.Schema(
           type: Number,
           required: true,
         },
-        image: {
-          type: String,
-          required: true,
-        },
+        images: [
+          {
+            image: {
+              type: String,
+              required: true,
+            },
+          },
+        ],
       },
     ],
     user: {
