@@ -3,11 +3,12 @@ import {
   useDeleteSingleProductMutation,
   useGetProductsAdminQuery,
 } from "../Redux/Slices/apiProductSlice";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash, FaDownload } from "react-icons/fa";
 import usePageTitle from "../../Components/customHooks/PageTitle";
 import toast from "react-hot-toast";
 import Loader from "../../Components/Loader/Loader";
 import { useNavigate } from "react-router-dom";
+import { templatePdf } from "../../Utils/Pdf";
 
 const AdminProductList = () => {
   usePageTitle("Admin Product List");
@@ -43,29 +44,48 @@ const AdminProductList = () => {
     setCurrentPage(1);
   };
 
-  //Delete Product
-
-  if (isDeleting) {
-    return <Loader />;
-  }
   const handleDeleteProduct = async (productId) => {
     try {
       const result = await deleteSingleProduct(productId).unwrap();
       if (result) {
-        return toast.success(
-          result?.message || "Product deleted successfully!"
-        );
+        toast.success(result?.message || "Product deleted successfully!");
       }
     } catch (error) {
       console.error("Error deleting product:", error);
     }
   };
 
+  const handleDownloadPdf = () => {
+    const pdfhead = "Admin Product List";
+    const tablebody = [
+      ["#", "Product Name", "Price", "Stock"],
+      ...filteredProducts.map((product, i) => [
+        i + 1,
+        product.name,
+        `₹${product.price}`,
+        product.stock.toString(),
+      ]),
+    ];
+    const paperAngle = "portrait";
+    templatePdf(pdfhead, tablebody, paperAngle);
+  };
+
+  if (isDeleting) return <Loader />;
+
   return (
     <div className="max-w-7xl mx-auto p-6">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b pb-2">
-        🛒 Admin Product List
-      </h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold text-gray-800 border-b pb-2">
+          🛒 Admin Product List
+        </h2>
+        <button
+          onClick={handleDownloadPdf}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded flex items-center gap-2"
+        >
+          <FaDownload />
+          Download PDF
+        </button>
+      </div>
 
       {/* Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">

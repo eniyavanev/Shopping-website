@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, FileDown } from "lucide-react";
 import {
   useGetAllOrdersAdminQuery,
   useDeleteOrdersAdminMutation,
   useUpdateOrdersAdminMutation,
 } from "../Redux/Slices/apiorderSlice";
 import { toast } from "react-hot-toast";
+import { templateExcel } from "../../Utils/Excel";
 
 const statusColors = {
   Processing: "bg-yellow-200 text-yellow-800",
   Delivered: "bg-green-200 text-green-800",
   Cancelled: "bg-red-200 text-red-800",
-  // add more statuses as needed
 };
 
 const OrdersList = () => {
@@ -21,7 +21,6 @@ const OrdersList = () => {
     isError,
     refetch,
   } = useGetAllOrdersAdminQuery();
-  console.log("data", data);
 
   const [deleteOrdersAdmin] = useDeleteOrdersAdminMutation();
   const [updateOrdersAdmin] = useUpdateOrdersAdminMutation();
@@ -30,10 +29,8 @@ const OrdersList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
-  // Process orders for display - one row per order
   const orders =
     data?.orders?.map((order) => {
-      // Calculate total quantity of items in the order
       const totalItems = order.orderItems.reduce(
         (sum, item) => sum + item.quantity,
         0
@@ -43,11 +40,10 @@ const OrdersList = () => {
         totalItems,
         amount: order.totalPrice,
         status: order.orderStatus,
-        date: order.createdAt,
+        date: new Date(order.createdAt).toLocaleString(),
       };
     }) || [];
 
-  // Filter by search (searching by orderId here for simplicity)
   const filteredOrders = orders.filter((order) =>
     order.orderId.toLowerCase().includes(search.toLowerCase())
   );
@@ -63,7 +59,6 @@ const OrdersList = () => {
 
   const handleEdit = (orderId) => {
     alert(`Edit action for order ${orderId}`);
-    // You can add your update logic here
   };
 
   const handleDelete = async (id) => {
@@ -74,10 +69,24 @@ const OrdersList = () => {
     } catch (error) {
       console.error("Error deleting order:", error);
       toast.error(
-        error?.data?.message,
-        "Failed to delete order. Please try again."
+        error?.data?.message || "Failed to delete order. Please try again."
       );
     }
+  };
+
+  const handleDownloadExcel = () => {
+    const tableData = [
+      ["Order ID", "Items Ordered", "Amount", "Status", "Date"],
+      ...filteredOrders.map((order) => [
+        order.orderId,
+        order.totalItems,
+        order.amount,
+        order.status,
+        order.date,
+      ]),
+    ];
+
+    templateExcel("Orders_List", "Orders", tableData);
   };
 
   if (isOrdersLoading) return <p>Loading orders...</p>;
@@ -97,10 +106,7 @@ const OrdersList = () => {
           className="border border-gray-300 rounded-md px-4 py-2 w-full md:w-1/3 focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
         <div className="flex items-center gap-2">
-          <label
-            htmlFor="entries"
-            className="text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="entries" className="text-sm font-medium text-gray-700">
             Show:
           </label>
           <select
@@ -119,6 +125,13 @@ const OrdersList = () => {
             ))}
           </select>
         </div>
+        <button
+          onClick={handleDownloadExcel}
+          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+        >
+          <FileDown size={18} />
+          Export to Excel
+        </button>
       </div>
 
       <div className="overflow-x-auto rounded-xl shadow-xl border border-gray-200">
@@ -157,8 +170,7 @@ const OrdersList = () => {
                   <td className="px-6 py-4">
                     <span
                       className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
-                        statusColors[order.status] ||
-                        "bg-gray-200 text-gray-700"
+                        statusColors[order.status] || "bg-gray-200 text-gray-700"
                       }`}
                     >
                       {order.status}

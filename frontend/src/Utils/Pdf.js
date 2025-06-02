@@ -1,42 +1,35 @@
-    import pdfMake from 'pdfmake/build/pdfmake';
-    import pdfFonts from 'pdfmake/build/vfs_fonts';
+import pdfMake from "pdfmake/build/pdfmake";
+import * as pdfFonts from "pdfmake/build/vfs_fonts";
 
-    pdfMake.vfs = pdfFonts.pdfMake.vfs;
-    pdfMake.fonts = {
-        Roboto: {
-            normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
-            bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
-            italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
-            bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
+// 👇 FIX: Use `pdfFonts.default`
+pdfMake.vfs = pdfFonts.default.vfs;
+
+export const templatePdf = (pdfhead, tablebody, paperAngle) => {
+  const dd = {
+    pageSize: "A4",
+    pageOrientation: paperAngle,
+    defaultStyle: {
+      font: "Roboto",
+    },
+    content: [
+      {
+        text: pdfhead,
+        alignment: "center",
+        fontSize: 18,
+        margin: [0, 0, 0, 10],
+      },
+      {
+        margin: [0, 10, 0, 0],
+        table: {
+          body: tablebody,
         },
-        TimesNewRoman: {
-            normal: 'https://cdn.jsdelivr.net/gh/upturntech/timesnewroman/times_new_roman.ttf',
-            bold: 'https://cdn.jsdelivr.net/gh/upturntech/timesnewroman/times_new_roman_bold.ttf',
-            italics: 'https://cdn.jsdelivr.net/gh/upturntech/timesnewroman/times_new_roman_italic.ttf',
-            bolditalics: 'https://cdn.jsdelivr.net/gh/upturntech/timesnewroman/times_new_roman_bold_italic.ttf'
-        }
-    }
+      },
+    ],
+  };
 
-    export const templatePdf = (pdfhead, tablebody, paperAngle) => {
-        var dd = {
-            pageSize: 'A4',
-            pageOrientation: paperAngle,
-            defaultStyle: {
-                font: "TimesNewRoman"
-            },
-            content: [
-                { text: pdfhead, alignment: 'center', fontSize: 18, style: 'header', margin: [0, 0, 0, 10], },
-                {
-                    margin: [0, 10, 0, 0],
-                    table: {
-                        body: tablebody
-                    },
-                }
-            ],
+  const win = window.open("", "_blank");
+  pdfMake.createPdf(dd).open({}, win);
+  return true;
+};
 
-        }
-
-        var win = window.open('', '_blank');
-        pdfMake.createPdf(dd).open({}, win);
-        return true;
-    }
+//npm i pdfmake pdfmake-fonts
