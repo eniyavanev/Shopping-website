@@ -12,11 +12,16 @@ const GETSTRIPEAPIKEY = "/payment/stripeapikey";
 const CREATEORDER = "/orders/create";
 const GETMYORDERS = "/orders/myOrders";
 const GETSINGLEORDER = "/orders/get";
-const CREATEREVIEW = '/products/review';
+const CREATEREVIEW = "/products/review";
 
 // admin
-const GET_PRODUCTS_ADMIN = '/products/admin/products';
-const CREATE_PRODUCT = '/products/admin/create';
+const GET_PRODUCTS_ADMIN = "/products/admin/products";
+const CREATE_PRODUCT = "/products/admin/create";
+const DELETE_PRODUCT = "/products/admin/delete";
+const UPDATE_PRODUCT = "/products/admin/update";
+const GET_ALL_ORDERS_ADMIN = "/orders/admin/allOrders";
+const UPDATE_AND_DELETE_ORDERS_ADMIN = "/orders/admin";
+
 export {
   BASE_URL,
   GET_PRODUCTS,
@@ -34,5 +39,9 @@ export {
   GETSINGLEORDER,
   CREATEREVIEW,
   GET_PRODUCTS_ADMIN,
-  CREATE_PRODUCT
+  CREATE_PRODUCT,
+  DELETE_PRODUCT,
+  UPDATE_PRODUCT,
+  GET_ALL_ORDERS_ADMIN,
+  UPDATE_AND_DELETE_ORDERS_ADMIN,
 };

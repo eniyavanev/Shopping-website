@@ -4,6 +4,9 @@ import { useGetProductsQuery } from "./Redux/Slices/apiProductSlice";
 import Loader from "../Components/Loader/Loader";
 import Product from "../Components/Product/Product";
 import ReactPaginate from "react-paginate";
+import { hasSeenLoginModal, setLoginModalSeen } from "../Utils/modalHelper";
+import { useEffect } from "react";
+import Modal from "../Components/ui/Modal";
 
 const Home = () => {
   usePageTitle("Home");
@@ -25,7 +28,21 @@ const Home = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  //Modal Logics
+   const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    //session storage la loginseen modal illana modal kaamikanum iruntha kaatakoodathu
+    if (!hasSeenLoginModal()) {
+      setShowModal(true);
+      setLoginModalSeen(); // mark it as seen
+    }
+  }, []);
+
   return (
+    <>
+     {/* Modal component */}
+      {showModal && <Modal onClose={() => setShowModal(false)} />}
     <section className="max-w-7xl mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-blue-700 mb-6">Latest Products</h1>
 
@@ -72,6 +89,7 @@ const Home = () => {
         </>
       )}
     </section>
+    </>
   );
 };
 

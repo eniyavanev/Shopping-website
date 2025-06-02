@@ -4,6 +4,7 @@ const ApiFeautures = require("../../Utils/apiFeautures.js");
 const dotenv = require("dotenv");
 
 dotenv.config();
+const fs = require("fs");
 
 //Create product
 //POST - /api/products/create
@@ -11,14 +12,13 @@ dotenv.config();
 const createProduct = asyncHandler(async (req, res) => {
   let images = [];
   if (req.files.length > 0) {
-      req.files.forEach((file) => {
-        let url = `${process.env.BACKEND_URL}/uploads/products/${file.filename}`;
-        images.push({ image:url });
-      })
-  } 
-    
-  
-// images filed ku images array ah asign panrom
+    req.files.forEach((file) => {
+      let url = `${process.env.BACKEND_URL}/uploads/products/${file.filename}`;
+      images.push({ image: url });
+    });
+  }
+
+  // images filed ku images array ah asign panrom
   req.body.images = images;
   req.body.user = req.user.id; // user id add pannanum ithu token la irunthu id ah access panrom
   const product = await Product.create(req.body);
@@ -75,20 +75,64 @@ const getSingleProduct = asyncHandler(async (req, res, next) => {
 
 //Update product
 //PUT - /api/products/update/:id
-
 const updateProduct = asyncHandler(async (req, res) => {
-  const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-    new: true, //return the updated product
-    runValidators: true, //validate before updating the product
-  });
+  const product = await Product.findById(req.params.id);
+
   if (!product) {
     return res
       .status(404)
       .json({ success: false, message: "Product not found" });
   }
-  res
-    .status(200)
-    .json({ success: true, message: "Product updated successfully", product });
+
+  // Parse oldImages from request body — it comes as JSON string of IDs or URLs user wants to keep
+  let oldImagesToKeep = [];
+  if (req.body.oldImages) {
+    try {
+      oldImagesToKeep = JSON.parse(req.body.oldImages);
+    } catch (err) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid oldImages format" });
+    }
+  }
+
+  // Filter existing product.images to keep only those in oldImagesToKeep (by id or url)
+  let updatedImages = product.images.filter((img) => {
+    // Assuming img._id or img.image (url) matches the ones sent by frontend
+    // Adjust this condition depending on what exactly frontend sends (IDs or URLs)
+    return (
+      oldImagesToKeep.includes(img._id?.toString()) ||
+      oldImagesToKeep.includes(img.image)
+    );
+  });
+
+  // Add new uploaded files, convert to URLs, and push
+  if (req.files && req.files.length > 0) {
+    req.files.forEach((file) => {
+      const url = `${process.env.BACKEND_URL}/uploads/products/${file.filename}`;
+      updatedImages.push({ image: url });
+    });
+  }
+
+  // Update req.body.images with updatedImages so Product.update uses it
+  req.body.images = updatedImages;
+
+  // Now update the product with all other fields from req.body
+  const updatedProduct = await Product.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    {
+      new: true,
+      runValidators: true,
+      useFindAndModify: false,
+    }
+  );
+
+  res.status(200).json({
+    success: true,
+    message: "Product updated successfully",
+    product: updatedProduct,
+  });
 });
 
 //Delete product
@@ -229,9 +273,11 @@ const deleteReview = asyncHandler(async (req, res, next) => {
 // @access Admin
 const getProductsAdmin = asyncHandler(async (req, res, next) => {
   const products = await Product.find();
-  res
-    .status(200)
-    .json({ success: true, message: "Products fetched successfully", products });
+  res.status(200).json({
+    success: true,
+    message: "Products fetched successfully",
+    products,
+  });
 });
 
 //Export

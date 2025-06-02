@@ -77,7 +77,7 @@ const Sidebar = () => {
           )}
 
           <Link
-            to="/dashboard/orders"
+            to="/ProtectedRoutes/Admin/OrdersList"
             className="flex items-center gap-3 hover:text-yellow-400 transition-colors duration-200"
             onClick={() => setIsOpen(false)}
           >

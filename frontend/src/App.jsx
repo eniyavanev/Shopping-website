@@ -31,6 +31,9 @@ import AdminProductList from "./Pages/Admin Pages/AdminProductList";
 import AdminLayout from "./Components/Admin/AdminLayout";
 import MainContent from "./Pages/Admin Pages/MainContent";
 import NewProduct from "./Pages/Admin Pages/NewProduct";
+import UpdateProduct from "./Pages/Admin Pages/UpdateProduct";
+import OrdersList from "./Pages/Admin Pages/OrdersList";
+import ErrorPage from "./Components/ui/ErrorPage";
 
 function App() {
   const { data, isSuccess } = useGetStripeApiKeyQuery();
@@ -48,6 +51,7 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
+          <Route path="*" element={<ErrorPage />} />
           <Route path="/" element={<Main />}>
             <Route path="/login" element={<Login />} />
             <Route path="/Signup" element={<Signup />} />
@@ -95,6 +99,8 @@ function App() {
             <Route element={<AdminLayout />}>
               <Route path="Dashboard" element={<MainContent />} />
               <Route path="createProduct" element={<NewProduct />} />
+              <Route path="UpdateProduct/:id" element={<UpdateProduct />} />
+              <Route path="OrdersList" element={<OrdersList />} />
               <Route path="AdminProductList" element={<AdminProductList />} />
             </Route>
             {/* other admin routes */}

@@ -22,7 +22,7 @@ router
   .get(checkToken, isAdmin("admin"), getAllOrders);
 
 router
-  .route("/admin/order/:id")
+  .route("/admin/:id")
   .put(checkToken, isAdmin("admin"), updateOrder)
   .delete(checkToken, isAdmin("admin"), deleteOrder);
 

@@ -3,22 +3,7 @@ import usePageTitle from "../../Components/customHooks/PageTitle";
 import { useCreateProductMutation } from "../Redux/Slices/apiProductSlice";
 import Loader from "../../Components/Loader/Loader";
 import toast, { Toaster } from "react-hot-toast";
-
-const categories = [
-  "Electronics",
-  "MobilePhones",
-  "Cameras",
-  "Laptops",
-  "Accessories",
-  "Headphones",
-  "Food",
-  "Books",
-  "Clothes/Shoes",
-  "Beauty/Health",
-  "Sports",
-  "Outdoor",
-  "HomeAppliances",
-];
+import { categories, InputField } from "../../Components/Data/Data";
 
 const NewProduct = () => {
   usePageTitle("Add New Product");
@@ -225,27 +210,5 @@ const NewProduct = () => {
     </div>
   );
 };
-
-const InputField = ({
-  label,
-  name,
-  type,
-  value,
-  handleChange,
-  placeholder,
-}) => (
-  <div>
-    <label className="block text-gray-700 font-medium mb-1">{label}</label>
-    <input
-      type={type}
-      name={name}
-      value={value}
-      onChange={handleChange}
-      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-      placeholder={placeholder}
-      required
-    />
-  </div>
-);
 
 export default NewProduct;

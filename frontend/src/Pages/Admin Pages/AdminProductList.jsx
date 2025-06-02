@@ -1,10 +1,22 @@
 import React, { useState } from "react";
-import { useGetProductsAdminQuery } from "../Redux/Slices/apiProductSlice";
+import {
+  useDeleteSingleProductMutation,
+  useGetProductsAdminQuery,
+} from "../Redux/Slices/apiProductSlice";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import usePageTitle from "../../Components/customHooks/PageTitle";
+import toast from "react-hot-toast";
+import Loader from "../../Components/Loader/Loader";
+import { useNavigate } from "react-router-dom";
 
 const AdminProductList = () => {
+  usePageTitle("Admin Product List");
+  const navigate = useNavigate();
   const { data, isLoading } = useGetProductsAdminQuery();
   const allProducts = data?.products || [];
+
+  const [deleteSingleProduct, { isLoading: isDeleting }] =
+    useDeleteSingleProductMutation();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(5);
@@ -29,6 +41,24 @@ const AdminProductList = () => {
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
+  };
+
+  //Delete Product
+
+  if (isDeleting) {
+    return <Loader />;
+  }
+  const handleDeleteProduct = async (productId) => {
+    try {
+      const result = await deleteSingleProduct(productId).unwrap();
+      if (result) {
+        return toast.success(
+          result?.message || "Product deleted successfully!"
+        );
+      }
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
   };
 
   return (
@@ -118,10 +148,20 @@ const AdminProductList = () => {
                     {product.stock}
                   </td>
                   <td className="px-6 py-4 text-center space-x-3">
-                    <button className="text-blue-500 hover:text-blue-700 transition">
+                    <button
+                      onClick={() =>
+                        navigate(
+                          `/ProtectedRoutes/Admin/UpdateProduct/${product._id}`
+                        )
+                      }
+                      className="text-blue-500 hover:text-blue-700 transition"
+                    >
                       <FaEdit />
                     </button>
-                    <button className="text-red-500 hover:text-red-700 transition">
+                    <button
+                      onClick={() => handleDeleteProduct(product._id)}
+                      className="text-red-500 hover:text-red-700 transition"
+                    >
                       <FaTrash />
                     </button>
                   </td>

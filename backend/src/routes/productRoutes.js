@@ -28,6 +28,8 @@ const upload = multer({
 
 //Admin routes
 router.route("/admin/create").post(checkToken, isAdmin("admin"),upload.array("images"), createProduct);
+router.route("/admin/update/:id").put(checkToken,isAdmin("admin"),upload.array("images"),updateProduct);
+router.route("/admin/delete/:id").delete(checkToken,isAdmin("admin"),deleteSingleProduct);
 
 router
   .route("/admin/products")
@@ -35,8 +37,8 @@ router
 
 router.route("/get").get( getProducts);
 router.route("/get/:id").get(getSingleProduct);
-router.route("/update/:id").put(updateProduct);
-router.route("/delete/:id").delete(deleteSingleProduct);
+
+
 router
   .route("/review")
   .put(checkToken, createProductReview)

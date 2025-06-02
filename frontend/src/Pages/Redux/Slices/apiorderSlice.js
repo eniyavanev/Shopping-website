@@ -1,4 +1,10 @@
-import { CREATEORDER,GETMYORDERS,GETSINGLEORDER } from "../Constant/constant";
+import {
+  CREATEORDER,
+  GETMYORDERS,
+  GETSINGLEORDER,
+  GET_ALL_ORDERS_ADMIN,
+  UPDATE_AND_DELETE_ORDERS_ADMIN,
+} from "../Constant/constant";
 import { apiSlice } from "./apiSlice";
 
 const orderSlice = apiSlice.injectEndpoints({
@@ -22,7 +28,38 @@ const orderSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+
+    // Admin
+    getAllOrdersAdmin: builder.query({
+      query: () => ({
+        url: GET_ALL_ORDERS_ADMIN,
+        method: "GET",
+      }),
+      providesTags: ["Order"],
+    }),
+    updateOrdersAdmin: builder.mutation({
+      query: ({ productId, data }) => ({
+        url: `${UPDATE_AND_DELETE_ORDERS_ADMIN}/${productId}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["Order"],
+    }),
+    deleteOrdersAdmin: builder.mutation({
+      query: (id) => ({
+        url: `${UPDATE_AND_DELETE_ORDERS_ADMIN}/${id}`,
+        method: "DELETE",
+      }),
+invalidatesTags: ["Order"],
+    }),
   }),
 });
 
-export const { useCreateOrderMutation, useGetMyOrdersQuery, useGetSingleOrderQuery } = orderSlice;
+export const {
+  useCreateOrderMutation,
+  useGetMyOrdersQuery,
+  useGetSingleOrderQuery,
+  useGetAllOrdersAdminQuery,
+  useUpdateOrdersAdminMutation,
+  useDeleteOrdersAdminMutation,
+} = orderSlice;

@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import SearchInput from "../Search/Search";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FaUserCircle, FaHeart, FaSignOutAlt, FaBoxOpen, FaUserCog, FaTachometerAlt } from "react-icons/fa";
+import { clearLoginModalSeen } from "../../Utils/modalHelper";
 
 const Header = () => {
   const user = useSelector((state) => state.protectRoute.user);
@@ -32,6 +33,7 @@ const Header = () => {
     try {
       const res = await logoutUser().unwrap();
       dispatch(removeUser());
+      clearLoginModalSeen();
       toast.success(res?.message || "Logout successful!");
       setDropdownOpen(false);
       navigate("/login");

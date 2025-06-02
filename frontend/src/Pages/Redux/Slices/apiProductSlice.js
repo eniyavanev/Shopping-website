@@ -1,5 +1,12 @@
 // productSlice.js
-import { GET_PRODUCTS, CREATEREVIEW,GET_PRODUCTS_ADMIN,CREATE_PRODUCT } from "../Constant/constant";
+import {
+  GET_PRODUCTS,
+  CREATEREVIEW,
+  GET_PRODUCTS_ADMIN,
+  CREATE_PRODUCT,
+  DELETE_PRODUCT,
+  UPDATE_PRODUCT,
+} from "../Constant/constant";
 import { apiSlice } from "./apiSlice";
 
 const productSlice = apiSlice.injectEndpoints({
@@ -73,7 +80,22 @@ const productSlice = apiSlice.injectEndpoints({
         body: data,
       }),
       invalidatesTags: ["Product"],
-    })
+    }),
+    updateProduct: builder.mutation({
+      query: ( {productId, formData} ) => ({
+        url: `${UPDATE_PRODUCT}/${productId}`,
+        method: "PUT",
+        body: formData,
+      }),
+      invalidatesTags: ["Product"],
+    }),
+    deleteSingleProduct: builder.mutation({
+      query: (id) => ({
+        url: `${DELETE_PRODUCT}/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Product"],
+    }),
   }),
 });
 
@@ -83,5 +105,7 @@ export const {
   useCreateReviewMutation,
   useGetSingleProductReviewsQuery,
   useGetProductsAdminQuery,
-  useCreateProductMutation
+  useCreateProductMutation,
+  useDeleteSingleProductMutation,
+  useUpdateProductMutation,
 } = productSlice;
