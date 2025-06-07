@@ -21,6 +21,9 @@ const DELETE_PRODUCT = "/products/admin/delete";
 const UPDATE_PRODUCT = "/products/admin/update";
 const GET_ALL_ORDERS_ADMIN = "/orders/admin/allOrders";
 const UPDATE_AND_DELETE_ORDERS_ADMIN = "/orders/admin";
+const GETALLUSERS_UPDATE_DELETE_GETSINGLE_USER = "/auth/admin/profile";
+const GET_AND_DELETE_SINGLE_PRODUCT_REVIEWS = "/products/admin/Reviews";
+
 
 export {
   BASE_URL,
@@ -44,4 +47,6 @@ export {
   UPDATE_PRODUCT,
   GET_ALL_ORDERS_ADMIN,
   UPDATE_AND_DELETE_ORDERS_ADMIN,
+  GETALLUSERS_UPDATE_DELETE_GETSINGLE_USER,
+  GET_AND_DELETE_SINGLE_PRODUCT_REVIEWS
 };

@@ -15,18 +15,21 @@ const orderSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Order"],
     }),
     getMyOrders: builder.query({
       query: () => ({
         url: GETMYORDERS,
         method: "GET",
       }),
+      providesTags: ["Order"],
     }),
     getSingleOrder: builder.query({
       query: (id) => ({
         url: `${GETSINGLEORDER}/${id}`,
         method: "GET",
       }),
+      providesTags: ["Order"],
     }),
 
     // Admin
@@ -38,10 +41,10 @@ const orderSlice = apiSlice.injectEndpoints({
       providesTags: ["Order"],
     }),
     updateOrdersAdmin: builder.mutation({
-      query: ({ productId, data }) => ({
-        url: `${UPDATE_AND_DELETE_ORDERS_ADMIN}/${productId}`,
+      query: ({ id, orderStatus }) => ({
+        url: `${UPDATE_AND_DELETE_ORDERS_ADMIN}/${id}`,
         method: "PUT",
-        body: data,
+        body: {orderStatus},
       }),
       invalidatesTags: ["Order"],
     }),
@@ -50,7 +53,7 @@ const orderSlice = apiSlice.injectEndpoints({
         url: `${UPDATE_AND_DELETE_ORDERS_ADMIN}/${id}`,
         method: "DELETE",
       }),
-invalidatesTags: ["Order"],
+      invalidatesTags: ["Order"],
     }),
   }),
 });

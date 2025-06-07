@@ -7,7 +7,14 @@ import { removeUser } from "../../Pages/Redux/Slices/protectRouteSlice";
 import toast from "react-hot-toast";
 import SearchInput from "../Search/Search";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { FaUserCircle, FaHeart, FaSignOutAlt, FaBoxOpen, FaUserCog, FaTachometerAlt } from "react-icons/fa";
+import {
+  FaUserCircle,
+  FaHeart,
+  FaSignOutAlt,
+  FaBoxOpen,
+  FaUserCog,
+  FaTachometerAlt,
+} from "react-icons/fa";
 import { clearLoginModalSeen } from "../../Utils/modalHelper";
 
 const Header = () => {
@@ -109,7 +116,10 @@ const Header = () => {
                 <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-xl z-50 py-2">
                   {user.role === "admin" && (
                     <button
-                      onClick={() =>{navigate("/ProtectedRoutes/Admin/Dashboard");setDropdownOpen(false);}}
+                      onClick={() => {
+                        navigate("/ProtectedRoutes/Admin/Dashboard");
+                        setDropdownOpen(false);
+                      }}
                       className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
                     >
                       <FaTachometerAlt /> Admin Dashboard
@@ -128,13 +138,6 @@ const Header = () => {
                     className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
                   >
                     <FaHeart /> Wishlist
-                  </button>
-
-                  <button
-                    onClick={() => handleProfileClick("UserOrders")}
-                    className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
-                  >
-                    <FaBoxOpen /> My Orders
                   </button>
 
                   <button

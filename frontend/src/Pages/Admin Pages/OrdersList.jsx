@@ -3,18 +3,14 @@ import { Pencil, Trash2, FileDown } from "lucide-react";
 import {
   useGetAllOrdersAdminQuery,
   useDeleteOrdersAdminMutation,
-  useUpdateOrdersAdminMutation,
 } from "../Redux/Slices/apiorderSlice";
 import { toast } from "react-hot-toast";
 import { templateExcel } from "../../Utils/Excel";
-
-const statusColors = {
-  Processing: "bg-yellow-200 text-yellow-800",
-  Delivered: "bg-green-200 text-green-800",
-  Cancelled: "bg-red-200 text-red-800",
-};
+import { useNavigate } from "react-router-dom";
+import { statusColors } from "../../Components/Data/Data";
 
 const OrdersList = () => {
+  const navigate = useNavigate();
   const {
     data,
     isLoading: isOrdersLoading,
@@ -23,7 +19,6 @@ const OrdersList = () => {
   } = useGetAllOrdersAdminQuery();
 
   const [deleteOrdersAdmin] = useDeleteOrdersAdminMutation();
-  const [updateOrdersAdmin] = useUpdateOrdersAdminMutation();
 
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -58,7 +53,7 @@ const OrdersList = () => {
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   const handleEdit = (orderId) => {
-    alert(`Edit action for order ${orderId}`);
+    navigate(`/ProtectedRoutes/Admin/UpdateOrder/${orderId}`);
   };
 
   const handleDelete = async (id) => {
@@ -106,7 +101,10 @@ const OrdersList = () => {
           className="border border-gray-300 rounded-md px-4 py-2 w-full md:w-1/3 focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
         <div className="flex items-center gap-2">
-          <label htmlFor="entries" className="text-sm font-medium text-gray-700">
+          <label
+            htmlFor="entries"
+            className="text-sm font-medium text-gray-700"
+          >
             Show:
           </label>
           <select
@@ -170,7 +168,8 @@ const OrdersList = () => {
                   <td className="px-6 py-4">
                     <span
                       className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
-                        statusColors[order.status] || "bg-gray-200 text-gray-700"
+                        statusColors[order.status] ||
+                        "bg-gray-200 text-gray-700"
                       }`}
                     >
                       {order.status}
@@ -203,11 +202,12 @@ const OrdersList = () => {
         <div className="inline-flex rounded-md border border-gray-300 shadow-sm">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
+            disabled={currentPage === 1 || totalPages === 1}
             className="px-3 py-1 disabled:opacity-50 hover:bg-purple-500 hover:text-white"
           >
             Prev
           </button>
+
           {pages.map((page) => (
             <button
               key={page}
@@ -221,11 +221,12 @@ const OrdersList = () => {
               {page}
             </button>
           ))}
+
           <button
             onClick={() =>
               setCurrentPage((prev) => Math.min(prev + 1, totalPages))
             }
-            disabled={currentPage === totalPages}
+            disabled={currentPage === totalPages || totalPages === 1}
             className="px-3 py-1 border-l border-gray-300 disabled:opacity-50 hover:bg-purple-500 hover:text-white"
           >
             Next

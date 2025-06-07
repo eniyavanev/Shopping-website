@@ -41,3 +41,4 @@ const resetPasswordLink = async (email, name, token) => {
 };
 
 module.exports = resetPasswordLink;
+//mongodb+srv://eniyavanev:Shopping-Mart-06-06-2025@shopping-mart.lfl1vtj.mongodb.net/

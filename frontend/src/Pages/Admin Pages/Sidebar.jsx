@@ -1,7 +1,15 @@
 // Sidebar.jsx
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FiHome, FiBox, FiChevronDown, FiUsers, FiShoppingCart, FiLogOut, FiMenu } from "react-icons/fi";
+import {
+  FiHome,
+  FiBox,
+  FiChevronDown,
+  FiUsers,
+  FiShoppingCart,
+  FiLogOut,
+  FiMenu,
+} from "react-icons/fi";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -54,7 +62,9 @@ const Sidebar = () => {
             </span>
             <FiChevronDown
               size={18}
-              className={`${productsOpen ? "rotate-180" : "rotate-0"} transition-transform duration-200`}
+              className={`${
+                productsOpen ? "rotate-180" : "rotate-0"
+              } transition-transform duration-200`}
             />
           </button>
           {productsOpen && (
@@ -85,11 +95,18 @@ const Sidebar = () => {
           </Link>
 
           <Link
-            to="/dashboard/users"
+            to="/ProtectedRoutes/Admin/AllUsers"
             className="flex items-center gap-3 hover:text-yellow-400 transition-colors duration-200"
             onClick={() => setIsOpen(false)}
           >
             <FiUsers size={20} /> Users
+          </Link>
+          <Link
+            to="/ProtectedRoutes/Admin/Reviews"
+            className="flex items-center gap-3 hover:text-yellow-400 transition-colors duration-200"
+            onClick={() => setIsOpen(false)}
+          >
+            <FiUsers size={20} /> Reviews
           </Link>
         </nav>
 

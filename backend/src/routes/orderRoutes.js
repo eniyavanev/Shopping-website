@@ -7,7 +7,8 @@ const {
   updateOrder,
   deleteOrder,
 } = require("../controllers/orderController.js");
-const { checkToken, isAdmin } = require("../middleware/tokenAuthentication.js");
+const { checkToken, isAdmin } = require("../middleware/tokenauthentication.js");
+
 const router = express.Router();
 
 router.route("/create").post(checkToken, createOrder);

@@ -34,6 +34,10 @@ import NewProduct from "./Pages/Admin Pages/NewProduct";
 import UpdateProduct from "./Pages/Admin Pages/UpdateProduct";
 import OrdersList from "./Pages/Admin Pages/OrdersList";
 import ErrorPage from "./Components/ui/ErrorPage";
+import UpdateOrder from "./Pages/Admin Pages/UpdateOrder";
+import AllUsers from "./Pages/Admin Pages/AllUsers";
+import UpdateUser from "./Pages/Admin Pages/UpdateUser";
+import Reviews from "./Pages/Admin Pages/Reviews";
 
 function App() {
   const { data, isSuccess } = useGetStripeApiKeyQuery();
@@ -100,8 +104,12 @@ function App() {
               <Route path="Dashboard" element={<MainContent />} />
               <Route path="createProduct" element={<NewProduct />} />
               <Route path="UpdateProduct/:id" element={<UpdateProduct />} />
+              <Route path="UpdateOrder/:id" element={<UpdateOrder />} />
               <Route path="OrdersList" element={<OrdersList />} />
               <Route path="AdminProductList" element={<AdminProductList />} />
+              <Route path="AllUsers" element={<AllUsers />} />
+              <Route path="UpdateUser/:id" element={<UpdateUser />} />
+              <Route path="Reviews" element={<Reviews />} />
             </Route>
             {/* other admin routes */}
           </Route>

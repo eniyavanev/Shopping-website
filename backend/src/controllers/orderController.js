@@ -78,30 +78,39 @@ const getAllOrders = asyncHandler(async (req, res, next) => {
 // @route PUT /api/admin/order/:id
 // @access Admin
 const updateOrder = asyncHandler(async (req, res, next) => {
+  console.log(req.body);
+
   const order = await Order.findById(req.params.id);
 
-  if (!req.body.orderStatus) {
+  if (!order) {
+    return res.status(404).json({ success: false, message: "Order not found" });
+  }
+
+  const { orderStatus } = req.body;
+
+  if (!orderStatus) {
     return res
       .status(400)
       .json({ success: false, message: "Order status is required" });
   }
 
-  if (!order) {
-    return next(new Error("Order not found"));
-  }
-
   if (order.orderStatus === "Delivered") {
-    return next(new Error("You have already delivered this order"));
+    return res.status(400).json({
+      success: false,
+      message: "You have already delivered this order",
+    });
   }
 
-  // ✅ use for...of instead of forEach
+  // Reduce stock for each product in the order
   for (const item of order.orderItems) {
-    await updateStock(item.product, item.quantity);
+    //console.log("item",item);
+
+    await updateStock(item._id, item.quantity);
   }
 
-  order.orderStatus = req.body.orderStatus;
+  order.orderStatus = orderStatus;
 
-  if (req.body.status === "Delivered") {
+  if (orderStatus === "Delivered") {
     order.deliveredAt = Date.now();
   }
 
@@ -113,9 +122,12 @@ const updateOrder = asyncHandler(async (req, res, next) => {
     order,
   });
 
-  // 🔧 inner function
-  async function updateStock(id, quantity) {
-    const product = await Product.findById(id);
+  // Helper function to update stock
+  async function updateStock(productId, quantity) {
+    const product = await Product.findById(productId);
+    if (!product) {
+      throw new Error(`Product not found with ID: ${productId}`);
+    }
     product.stock -= quantity;
     await product.save({ validateBeforeSave: false });
   }

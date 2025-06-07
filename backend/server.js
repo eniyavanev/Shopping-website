@@ -13,23 +13,26 @@ const path = require("path");
 const payment = require("./src/routes/paymentRoutes.js");
 
 dotenv.config();
+//Shopping-Mart-06-06-2025
 
 // connect to database
 connectDB();
-app.use(cors({
-   origin: "http://localhost:5173", 
-  credentials: true
-}));
-app.use((req, res, next) => {
-  if (req.originalUrl === "/api/payment/webhook") {
-    next(); // skip json body parser
-  } else {
-    express.json()(req, res, next);
-  }
-});
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
+// For Stripe webhook or any raw body route — BEFORE express.json()
+app.use("/api/payment/webhook", express.raw({ type: "*/*" }));
+
+// Now add the global middlewares
+app.use(express.json()); // ✅ Parse JSON globally
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.get("/", (req, res) => {
   res.send("hello world");
@@ -61,13 +64,10 @@ process.on("unhandledRejection", (err, promise) => {
   server.close(() => process.exit(1));
 });
 
-
-// handle uncaught exceptions -  munnadi error show pannitu shutdiwn panrom 
+// handle uncaught exceptions -  munnadi error show pannitu shutdiwn panrom
 // throw , undefined, null ithellam try catch use pannalama error varum
 process.on("uncaughtException", (err) => {
   console.log(`Error: ${err.message}`);
   console.log(`Shutting down the server due to Uncaught Exception`);
   server.close(() => process.exit(1));
 });
-
-

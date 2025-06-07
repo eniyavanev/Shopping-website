@@ -7,7 +7,7 @@ const {
   createProductReview,
   getSingleProductReviews,
   deleteReview,
-  getProductsAdmin
+  getProductsAdmin,
 } = require("../controllers/productController.js");
 const express = require("express");
 const { checkToken, isAdmin } = require("../middleware/tokenauthentication.js");
@@ -24,24 +24,37 @@ const upload = multer({
       cb(null, `${Date.now()}-${file.originalname}`);
     },
   }),
-})
+});
 
 //Admin routes
-router.route("/admin/create").post(checkToken, isAdmin("admin"),upload.array("images"), createProduct);
-router.route("/admin/update/:id").put(checkToken,isAdmin("admin"),upload.array("images"),updateProduct);
-router.route("/admin/delete/:id").delete(checkToken,isAdmin("admin"),deleteSingleProduct);
+router
+  .route("/admin/create")
+  .post(checkToken, isAdmin("admin"), upload.array("images"), createProduct);
+router
+  .route("/admin/update/:id")
+  .put(checkToken, isAdmin("admin"), upload.array("images"), updateProduct);
+router
+  .route("/admin/delete/:id")
+  .delete(checkToken, isAdmin("admin"), deleteSingleProduct);
+router
+  .route("/admin/Reviews")
+  .delete(checkToken, isAdmin("admin"), deleteReview);
+  router
+  .route("/admin/Reviews")
+  .get(checkToken,isAdmin("admin"), getSingleProductReviews);
 
 router
   .route("/admin/products")
   .get(checkToken, isAdmin("admin"), getProductsAdmin);
 
-router.route("/get").get( getProducts);
-router.route("/get/:id").get(getSingleProduct);
 
+  //public routes
+router.route("/get").get(getProducts);
+router.route("/get/:id").get(getSingleProduct);
 
 router
   .route("/review")
   .put(checkToken, createProductReview)
-  .get(checkToken, getSingleProductReviews).delete(checkToken, deleteReview);
+  .get(checkToken, getSingleProductReviews);
 
 module.exports = router;
