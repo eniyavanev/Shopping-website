@@ -75,8 +75,13 @@ const orderSchema = new mongoose.Schema(
     },
     paidAt: {
       type: Date,
-      required: true,
+      required: false,
     },
+    isPaid: {
+  type: Boolean,
+  required: true,
+  default: false, // COD order-na default-a unpaid
+},
     itemsPrice: {
       type: Number,
       default: 0,

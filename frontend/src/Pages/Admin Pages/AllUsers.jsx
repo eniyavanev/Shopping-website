@@ -77,7 +77,7 @@ const AllUsers = () => {
             setSearch(e.target.value);
             setCurrentPage(1);
           }}
-          className="border px-4 py-2 rounded-md w-full md:w-1/3 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          className="border focus:border-0 px-4 py-2 rounded-md w-full md:w-1/3 focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
 
         <div className="flex items-center gap-2">
@@ -91,7 +91,7 @@ const AllUsers = () => {
               setItemsPerPage(Number(e.target.value));
               setCurrentPage(1);
             }}
-            className="border px-2 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="border focus:border-0 px-2 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
             {[5, 10, 20].map((val) => (
               <option key={val} value={val}>

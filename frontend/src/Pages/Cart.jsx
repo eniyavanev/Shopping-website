@@ -68,7 +68,7 @@ const Cart = () => {
                 className="flex flex-col md:flex-row items-center gap-6 p-6 bg-white/60 backdrop-blur-md rounded-3xl shadow-xl hover:shadow-2xl transition duration-300 border border-white/80"
               >
                 <img
-                  src={item.image}
+                  src={item.images[0].image}
                   alt={item.name}
                   className="w-28 h-28 rounded-2xl object-contain shadow-md border border-gray-200 hover:scale-105 transition"
                 />

@@ -8,8 +8,10 @@ import { toast } from "react-hot-toast";
 import { templateExcel } from "../../Utils/Excel";
 import { useNavigate } from "react-router-dom";
 import { statusColors } from "../../Components/Data/Data";
+import usePageTitle from "../../Components/customHooks/PageTitle";
 
 const OrdersList = () => {
+  usePageTitle("Orders List");
   const navigate = useNavigate();
   const {
     data,
@@ -139,7 +141,7 @@ const OrdersList = () => {
               <th className="px-6 py-4 text-left">Order ID</th>
               <th className="px-6 py-4 text-left">Items Ordered</th>
               <th className="px-6 py-4 text-left">Amount</th>
-              <th className="px-6 py-4 text-left">Status</th>
+              <th className="px-6 py-4 text-left">Order-Status</th>
               <th className="px-6 py-4 text-left">Actions</th>
             </tr>
           </thead>

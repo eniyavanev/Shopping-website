@@ -87,7 +87,7 @@ const ConfirmOrder = () => {
                   <Link to={`/productDetails/${item._id}`} key={item._id}>
                     <div className="flex items-center gap-4 p-3 mb-3 border rounded-md bg-gray-50">
                       <img
-                        src={item.image}
+                        src={item.images[0].image}
                         alt={item.name}
                         className="w-16 h-16 object-cover rounded"
                       />

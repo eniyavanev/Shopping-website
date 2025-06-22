@@ -1,50 +1,58 @@
-import React, { useEffect, useState } from "react";
-import "./App.css";
+import React, { useEffect, useState, Suspense, lazy } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Main from "./Components/Main/Main";
-import Home from "../src/Pages/Home";
-import ProtectRoute from "./Components/ProtectRoute/ProtectRoute";
-import Login from "./Components/Authentication/Login";
-import Signup from "./Components/Authentication/Signup";
-import Cart from "./Pages/Cart";
-import Header from "./Components/Header/Header";
-import Footer from "./Components/Footer/Footer";
-import ProductDetails from "./Pages/ProductDetails";
-import ProductSearch from "./Pages/ProductSearch";
-import Profile from "./Pages/Profile/Profile";
-import EditProfile from "./Pages/Profile/EditProfile";
-import UpdatePassword from "./Pages/Profile/UpdatePassword";
-import ForgotPassword from "./Components/Authentication/ForgotPassword";
-import ResetPassword from "./Components/Authentication/ResetPassword";
-import Shipping from "./Pages/Shipping";
-import ConfirmOrder from "./Pages/ConfirmOrder";
-import Payment from "./Pages/Payment";
 import { useGetStripeApiKeyQuery } from "./Pages/Redux/Slices/apiPaymentSlice";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import OrderSuccess from "./Pages/OrderSuccess";
-import Wishlist from "./Pages/WishList";
-import UserOrders from "./Pages/UserOrders/UserOrders";
-import OrderDetail from "./Pages/UserOrders/OrderDetail";
-import Dashboard from "./Pages/Admin Pages/NewProduct";
-import AdminProductList from "./Pages/Admin Pages/AdminProductList";
-import AdminLayout from "./Components/Admin/AdminLayout";
-import MainContent from "./Pages/Admin Pages/MainContent";
-import NewProduct from "./Pages/Admin Pages/NewProduct";
-import UpdateProduct from "./Pages/Admin Pages/UpdateProduct";
-import OrdersList from "./Pages/Admin Pages/OrdersList";
-import ErrorPage from "./Components/ui/ErrorPage";
-import UpdateOrder from "./Pages/Admin Pages/UpdateOrder";
-import AllUsers from "./Pages/Admin Pages/AllUsers";
-import UpdateUser from "./Pages/Admin Pages/UpdateUser";
-import Reviews from "./Pages/Admin Pages/Reviews";
+import WhatsAppButton from "./Components/ui/WhatsAppButton";
+
+// Lazy Load Components
+const Main = lazy(() => import("./Components/Main/Main"));
+const Home = lazy(() => import("./Pages/Home"));
+const ProtectRoute = lazy(() =>
+  import("./Components/ProtectRoute/ProtectRoute")
+);
+const Login = lazy(() => import("./Components/Authentication/Login"));
+const Signup = lazy(() => import("./Components/Authentication/Signup"));
+const Cart = lazy(() => import("./Pages/Cart"));
+const Header = lazy(() => import("./Components/Header/Header"));
+const Footer = lazy(() => import("./Components/Footer/Footer"));
+const ProductDetails = lazy(() => import("./Pages/ProductDetails"));
+const ProductSearch = lazy(() => import("./Pages/ProductSearch"));
+const Profile = lazy(() => import("./Pages/Profile/Profile"));
+const EditProfile = lazy(() => import("./Pages/Profile/EditProfile"));
+const UpdatePassword = lazy(() => import("./Pages/Profile/UpdatePassword"));
+const ForgotPassword = lazy(() =>
+  import("./Components/Authentication/ForgotPassword")
+);
+const ResetPassword = lazy(() =>
+  import("./Components/Authentication/ResetPassword")
+);
+const Shipping = lazy(() => import("./Pages/Shipping"));
+const ConfirmOrder = lazy(() => import("./Pages/ConfirmOrder"));
+const Payment = lazy(() => import("./Pages/Payment"));
+const OrderSuccess = lazy(() => import("./Pages/OrderSuccess"));
+const Wishlist = lazy(() => import("./Pages/WishList"));
+const UserOrders = lazy(() => import("./Pages/UserOrders/UserOrders"));
+const OrderDetail = lazy(() => import("./Pages/UserOrders/OrderDetail"));
+const Dashboard = lazy(() => import("./Pages/Admin Pages/NewProduct"));
+const AdminProductList = lazy(() =>
+  import("./Pages/Admin Pages/AdminProductList")
+);
+const AdminLayout = lazy(() => import("./Components/Admin/AdminLayout"));
+const MainContent = lazy(() => import("./Pages/Admin Pages/MainContent"));
+const NewProduct = lazy(() => import("./Pages/Admin Pages/NewProduct"));
+const UpdateProduct = lazy(() => import("./Pages/Admin Pages/UpdateProduct"));
+const OrdersList = lazy(() => import("./Pages/Admin Pages/OrdersList"));
+const ErrorPage = lazy(() => import("./Components/ui/ErrorPage"));
+const UpdateOrder = lazy(() => import("./Pages/Admin Pages/UpdateOrder"));
+const AllUsers = lazy(() => import("./Pages/Admin Pages/AllUsers"));
+const UpdateUser = lazy(() => import("./Pages/Admin Pages/UpdateUser"));
+const Reviews = lazy(() => import("./Pages/Admin Pages/Reviews"));
 
 function App() {
   const { data, isSuccess } = useGetStripeApiKeyQuery();
   const [stripeApiKey, setStripeApiKey] = useState("");
-  // console.log("stripeApiKey", stripeApiKey);
 
-  // Set the key only once when fetched
   useEffect(() => {
     if (isSuccess && data?.stripeApiKey) {
       setStripeApiKey(data.stripeApiKey);
@@ -52,7 +60,15 @@ function App() {
   }, [data, isSuccess]);
 
   return (
-    <>
+    <Suspense
+      fallback={
+        <div className="p-4 animate-pulse space-y-4">
+          <div className="h-6 bg-gray-300 rounded w-1/2"></div>
+          <div className="h-6 bg-gray-300 rounded w-3/4"></div>
+          <div className="h-6 bg-gray-300 rounded w-full"></div>
+        </div>
+      }
+    >
       <BrowserRouter>
         <Routes>
           <Route path="*" element={<ErrorPage />} />
@@ -72,7 +88,6 @@ function App() {
               <Route path="order/success" element={<OrderSuccess />} />
               <Route path="ConfirmOrder" element={<ConfirmOrder />} />
 
-              {/* Load stripe only if the key is available */}
               <Route
                 path="Payment"
                 element={
@@ -99,7 +114,6 @@ function App() {
             path="/ProtectedRoutes/Admin"
             element={<ProtectRoute requiredRole="admin" />}
           >
-            {" "}
             <Route element={<AdminLayout />}>
               <Route path="Dashboard" element={<MainContent />} />
               <Route path="createProduct" element={<NewProduct />} />
@@ -111,11 +125,10 @@ function App() {
               <Route path="UpdateUser/:id" element={<UpdateUser />} />
               <Route path="Reviews" element={<Reviews />} />
             </Route>
-            {/* other admin routes */}
           </Route>
         </Routes>
       </BrowserRouter>
-    </>
+    </Suspense>
   );
 }
 

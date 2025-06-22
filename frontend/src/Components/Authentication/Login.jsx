@@ -65,6 +65,11 @@ const Login = () => {
       toast.error(err?.data?.message || "Login failed");
     }
   };
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSubmit(e);
+    }
+  };
 
   // Show loader if logging in
   if (isLoading) return <Loader />;
@@ -94,6 +99,7 @@ const Login = () => {
               autoComplete="off"
               value={formData.email}
               onChange={handleChange}
+               onKeyDown={handleKeyDown}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -125,6 +131,7 @@ const Login = () => {
               autoComplete="off"
               value={formData.password}
               onChange={handleChange}
+               onKeyDown={handleKeyDown}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />

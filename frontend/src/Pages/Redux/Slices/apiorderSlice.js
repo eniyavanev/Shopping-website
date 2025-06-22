@@ -1,9 +1,11 @@
+
 import {
   CREATEORDER,
   GETMYORDERS,
   GETSINGLEORDER,
   GET_ALL_ORDERS_ADMIN,
   UPDATE_AND_DELETE_ORDERS_ADMIN,
+  MARK_AS_PAID
 } from "../Constant/constant";
 import { apiSlice } from "./apiSlice";
 
@@ -55,6 +57,12 @@ const orderSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Order"],
     }),
+    markOrderAsPaid: builder.mutation({
+      query: (id) => ({
+        url: `${MARK_AS_PAID}/${id}`,
+        method: "PUT",
+      }),
+    })
   }),
 });
 
@@ -65,4 +73,5 @@ export const {
   useGetAllOrdersAdminQuery,
   useUpdateOrdersAdminMutation,
   useDeleteOrdersAdminMutation,
+  useMarkOrderAsPaidMutation
 } = orderSlice;

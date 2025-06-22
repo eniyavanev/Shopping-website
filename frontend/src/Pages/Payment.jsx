@@ -26,16 +26,16 @@ const Payment = () => {
   const elements = useElements();
   const dispatch = useDispatch();
 
+  const [paymentMethod, setPaymentMethod] = useState("card"); // "card" or "cod"
+  const [cardComplete, setCardComplete] = useState(false);
   const [processPayment, { isLoading }] = useProcessPaymentMutation();
   const [createOrder, { isLoading: isLoadingOrder, isError: isErrorOrder }] = useCreateOrderMutation();
-  const [cardComplete, setCardComplete] = useState(false);
 
   const { user } = useSelector((state) => state.protectRoute);
   const { shippingInfo, cart } = useSelector((state) => state.cart);
   const orderInfo = JSON.parse(sessionStorage.getItem("orderData"));
   const { totalPrice } = cart;
 
-  // Prepare order data to send to backend
   const order = {
     orderItems: cart.items,
     shippingInfo,
@@ -47,7 +47,6 @@ const Payment = () => {
     }),
   };
 
-  // Handle error during order creation
   if (isErrorOrder) {
     toast.error("Failed to create the order. Please try again.");
     return (
@@ -69,6 +68,27 @@ const Payment = () => {
 
   const handlePayment = async (e) => {
     e.preventDefault();
+
+    // If Cash on Delivery selected
+    if (paymentMethod === "cod") {
+      const paymentInfo = {
+        id: "COD-" + new Date().getTime(),
+        status: "Cash on Delivery",
+      };
+
+      try {
+        await createOrder({ ...order, paymentInfo }).unwrap();
+        dispatch(orderCompleted());
+        toast.success("Order placed with Cash on Delivery!");
+        navigate("/ProtectedRoutes/order/success");
+      } catch (error) {
+        toast.error("Failed to place COD order.");
+        console.error(error);
+      }
+      return;
+    }
+
+    // Stripe Card Payment
     if (!stripe || !elements) return;
     const cardElement = elements.getElement(CardElement);
     if (!cardElement) return;
@@ -146,31 +166,69 @@ const Payment = () => {
         </h2>
 
         <form onSubmit={handlePayment} className="space-y-6">
-          <div>
-            <label className="block text-gray-700 font-medium mb-2">
-              Card Information
+          {/* Payment Method Selection */}
+          <div className="space-y-4">
+            <label className="block text-gray-700 font-medium">
+              Select Payment Method
             </label>
-            <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 focus-within:ring-2 ring-indigo-500">
-              <CardElement
-                options={CARD_ELEMENT_OPTIONS}
-                onChange={(e) => setCardComplete(e.complete)}
-              />
+            <div className="flex gap-4">
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="card"
+                  checked={paymentMethod === "card"}
+                  onChange={() => setPaymentMethod("card")}
+                />
+                <span>Card</span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="cod"
+                  checked={paymentMethod === "cod"}
+                  onChange={() => setPaymentMethod("cod")}
+                />
+                <span>Cash on Delivery</span>
+              </label>
             </div>
           </div>
 
+          {/* Card Payment Section */}
+          {paymentMethod === "card" && (
+            <div>
+              <label className="block text-gray-700 font-medium mb-2">
+                Card Information
+              </label>
+              <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 focus-within:ring-2 ring-indigo-500">
+                <CardElement
+                  options={CARD_ELEMENT_OPTIONS}
+                  onChange={(e) => setCardComplete(e.complete)}
+                />
+              </div>
+            </div>
+          )}
+
           <button
             type="submit"
-            disabled={!stripe || !cardComplete || isLoading}
+            disabled={
+              isLoading ||
+              (paymentMethod === "card" && (!stripe || !cardComplete))
+            }
             className={`w-full bg-indigo-600 text-white font-semibold text-lg py-3 rounded-lg transition 
               ${
-                !stripe || !cardComplete || isLoading
+                isLoading ||
+                (paymentMethod === "card" && (!stripe || !cardComplete))
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:bg-indigo-700"
               }`}
           >
             {isLoading
               ? "Processing..."
-              : `Pay Now  $${Math.round(totalPrice)}`}
+              : paymentMethod === "cod"
+              ? "Place Order (COD)"
+              : `Pay Now $${Math.round(totalPrice)}`}
           </button>
         </form>
       </div>

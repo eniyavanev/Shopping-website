@@ -4,10 +4,11 @@ const {
   
 } = require("../controllers/paymentController");
 
-const { checkToken } = require("../middleware/tokenAuthentication");
+
 
 const router = require("express").Router();
 const bodyParser = require("body-parser");
+const { checkToken } = require("../middleware/tokenauthentication");
 
 // Payment routes
 router.route("/process").post(checkToken, processPayment);

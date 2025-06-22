@@ -15,6 +15,7 @@ const createOrder = asyncHandler(async (req, res, next) => {
     shippingPrice,
     totalPrice,
   } = req.body;
+  const isPaid = paymentInfo?.status === "succeeded";
   const order = await Order.create({
     shippingInfo,
     orderItems,
@@ -23,12 +24,16 @@ const createOrder = asyncHandler(async (req, res, next) => {
     taxPrice,
     shippingPrice,
     totalPrice,
-    paidAt: Date.now(), // oder create panra time
-    user: req.user._id, // order panra user id
+    isPaid,
+    paidAt: paymentInfo?.status === "succeeded" ? Date.now() : null,
+    user: req.user._id,
   });
-  res
-    .status(201)
-    .json({ success: true, message: "Order created successfully", order });
+
+  res.status(201).json({
+    success: true,
+    message: "Order created successfully",
+    order,
+  });
 });
 
 //@desc Get single order
@@ -146,6 +151,22 @@ const deleteOrder = asyncHandler(async (req, res, next) => {
     .json({ success: true, message: "Order deleted successfully" });
 });
 
+const markOrderAsPaid = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+
+  if (!order) {
+    return res.status(404).json({ message: "Order not found" });
+  }
+
+  order.isPaid = true;
+  order.paidAt = Date.now();
+  order.orderStatus = "Delivered";
+
+  const updatedOrder = await order.save();
+  res.status(200).json({ success: true, order: updatedOrder });
+});
+
+
 module.exports = {
   createOrder,
   getSingleOrder,
@@ -153,4 +174,5 @@ module.exports = {
   getAllOrders,
   updateOrder,
   deleteOrder,
+  markOrderAsPaid
 };

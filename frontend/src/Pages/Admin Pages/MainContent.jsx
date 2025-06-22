@@ -2,8 +2,10 @@ import React from "react";
 import { useGetProductsAdminQuery } from "../../Pages/Redux/Slices/apiProductSlice";
 import { useGetAllOrdersAdminQuery } from "../Redux/Slices/apiorderSlice";
 import { useGetAllUsersQuery } from "../Redux/Slices/apiAuthSlice";
+import usePageTitle from "../../Components/customHooks/PageTitle";
 
 const MainContent = () => {
+  usePageTitle("Dashboard");
   // Fetch data
   const { data } = useGetProductsAdminQuery();
   const products = data?.products || [];
@@ -42,6 +44,7 @@ const MainContent = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-8">
+      
       {/* Total Amount - Full width */}
       <div className="relative group bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rounded-xl shadow-lg text-white text-center p-10 cursor-pointer">
         <h2 className="text-2xl font-semibold">{stats[0].title}</h2>

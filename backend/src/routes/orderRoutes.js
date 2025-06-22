@@ -6,6 +6,7 @@ const {
   getAllOrders,
   updateOrder,
   deleteOrder,
+  markOrderAsPaid,
 } = require("../controllers/orderController.js");
 const { checkToken, isAdmin } = require("../middleware/tokenauthentication.js");
 
@@ -26,5 +27,9 @@ router
   .route("/admin/:id")
   .put(checkToken, isAdmin("admin"), updateOrder)
   .delete(checkToken, isAdmin("admin"), deleteOrder);
+
+router
+  .route("/admin/orderIsPaid/:id")
+  .put(checkToken, isAdmin("admin"), markOrderAsPaid);
 
 module.exports = router;

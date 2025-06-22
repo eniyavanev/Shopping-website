@@ -47,6 +47,7 @@ const Product = ({ product, index }) => {
         src={product.images[0]?.image || "/images/default.jpg"}
         alt={product.name}
         className="w-full h-40 object-cover rounded-t-xl"
+        loading="lazy"
       />
       <div className="p-4 space-y-2">
         <h2 className="text-lg font-semibold text-gray-800">{product.name}</h2>

@@ -8,10 +8,8 @@ import toast from "react-hot-toast";
 import SearchInput from "../Search/Search";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import {
-  FaUserCircle,
   FaHeart,
   FaSignOutAlt,
-  FaBoxOpen,
   FaUserCog,
   FaTachometerAlt,
 } from "react-icons/fa";
@@ -26,6 +24,9 @@ const Header = () => {
   const dropdownRef = useRef(null);
   const [logoutUser] = useLogoutUserMutation();
 
+  // ✅ Track online/offline status
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -33,7 +34,18 @@ const Header = () => {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+
+    // ✅ Online/offline status listeners
+    const goOnline = () => setIsOnline(true);
+    const goOffline = () => setIsOnline(false);
+    window.addEventListener("online", goOnline);
+    window.addEventListener("offline", goOffline);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("online", goOnline);
+      window.removeEventListener("offline", goOffline);
+    };
   }, []);
 
   const handleLogout = async () => {
@@ -96,14 +108,29 @@ const Header = () => {
                 className="flex items-center gap-2 cursor-pointer"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
               >
-                <img
-                  src={
-                    user.avatar ||
-                    "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
-                  }
-                  alt="Profile"
-                  className="w-10 h-10 rounded-full border"
-                />
+                {/* Profile photo with online indicator */}
+                <div className="relative w-10 h-10">
+                  <img
+                    src={
+                      user.avatar ||
+                      "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
+                    }
+                    alt="Profile"
+                    className="w-full h-full rounded-full border object-cover"
+                  />
+                  {isOnline && (
+                    <>
+                      {/* Dot */}
+                      <span
+                        className={`absolute bottom-0 right-0 w-3 h-3 ${
+                          isOnline ? "bg-green-500" : "bg-gray-400"
+                        } border-2 border-white rounded-full z-10`}
+                      />
+                      {/* Ring */}
+                      <span className="absolute inset-0 rounded-full border-2 border-green-400 animate-ping opacity-70 pointer-events-none" />
+                    </>
+                  )}
+                </div>
                 <span className="font-semibold">{user.name || "User"}</span>
                 {dropdownOpen ? (
                   <IoIosArrowUp size={20} />
