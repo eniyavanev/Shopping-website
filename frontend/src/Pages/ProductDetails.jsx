@@ -24,7 +24,7 @@ const ProductDetails = () => {
   const user = useSelector((state) => state.protectRoute.user);
 
   // Fetch product data using RTK Query hook
-  const { data, isLoading, isError } = useGetSingleProductQuery(id);
+  const { data, isLoading, isError, } = useGetSingleProductQuery(id);
 
   //review Query
   const [

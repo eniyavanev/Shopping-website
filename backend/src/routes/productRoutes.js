@@ -10,7 +10,7 @@ const {
   getProductsAdmin,
 } = require("../controllers/productController.js");
 const express = require("express");
-const { checkToken, isAdmin } = require("../middleware/tokenauthentication.js");
+const { checkToken, isAdmin } = require("../middleware/tokenAuthentication.js");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");

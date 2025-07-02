@@ -8,7 +8,7 @@ const {
   deleteOrder,
   markOrderAsPaid,
 } = require("../controllers/orderController.js");
-const { checkToken, isAdmin } = require("../middleware/tokenauthentication.js");
+const { checkToken, isAdmin } = require("../middleware/tokenAuthentication.js");
 
 const router = express.Router();
 

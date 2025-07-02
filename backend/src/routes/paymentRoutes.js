@@ -8,7 +8,7 @@ const {
 
 const router = require("express").Router();
 const bodyParser = require("body-parser");
-const { checkToken } = require("../middleware/tokenauthentication");
+const { checkToken } = require("../middleware/tokenAuthentication");
 
 // Payment routes
 router.route("/process").post(checkToken, processPayment);
