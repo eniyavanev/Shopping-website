@@ -1,4 +1,5 @@
-const BASE_URL = "http://localhost:8000/api";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const GET_PRODUCTS = "/products/get";
 const REGISTER = "/auth/register";
 const LOGIN = "/auth/login";
@@ -25,7 +26,6 @@ const GETALLUSERS_UPDATE_DELETE_GETSINGLE_USER = "/auth/admin/profile";
 const GET_AND_DELETE_SINGLE_PRODUCT_REVIEWS = "/products/admin/Reviews";
 const MARK_AS_PAID = "/orders/admin/orderIsPaid";
 
-
 export {
   BASE_URL,
   GET_PRODUCTS,
@@ -50,5 +50,5 @@ export {
   UPDATE_AND_DELETE_ORDERS_ADMIN,
   GETALLUSERS_UPDATE_DELETE_GETSINGLE_USER,
   GET_AND_DELETE_SINGLE_PRODUCT_REVIEWS,
-  MARK_AS_PAID
+  MARK_AS_PAID,
 };
