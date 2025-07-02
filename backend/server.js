@@ -17,9 +17,13 @@ dotenv.config();
 
 // connect to database
 connectDB();
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://ecommerce-client-nine-blond.vercel.app",
+    ],
     credentials: true,
   })
 );
