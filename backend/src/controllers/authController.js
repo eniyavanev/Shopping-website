@@ -7,7 +7,7 @@ const resetPasswordLink = require("../../Utils/email.js");
 const crypto = require("crypto");
 const dotenv = require("dotenv");
 const fs = require("fs");
-
+const cloudinary = require("../../config/cloudinaryConfig.js");
 dotenv.config();
 
 // @desc Register new user
@@ -61,7 +61,10 @@ const registerUser = asyncHandler(async (req, res, next) => {
 
   let avatar;
   if (req.file) {
-    avatar = req.file.path; // ✅ Cloudinary image URL
+    avatar = {
+      image: req.file.path,        // Cloudinary hosted image URL
+      public_id: req.file.filename // Unique public_id from Cloudinary
+    };
   }
 
   if (!name || !email || !password || !confirmPassword) {
@@ -262,40 +265,56 @@ const changePassword = asyncHandler(async (req, res, next) => {
 // @desc Update user Profile
 // @route PUT /api/auth/profile
 // @access Private
+
+
 const updateUserProfile = asyncHandler(async (req, res, next) => {
-  let updatedData = {
-    name: req.body.name,
-    email: req.body.email,
-  }
-   let avatar;
- if (req.file) {
-   avatar = `${process.env.BACKEND_URL}/uploads/images/${req.file.filename}`;
-   updatedData = {
-    ...updatedData,
-    avatar,
-   }
- }
-  const user = await User.findByIdAndUpdate(req.user.id, updatedData, {
-    new: true,
-    runValidators: true,
-  });
+  // 🧾 Step 1: Get the current user
+  const user = await User.findById(req.user.id);
 
   if (!user) {
     return next(new Error("User not found"));
   }
 
+  // 📦 Step 2: Start building updated data
+  let updatedData = {
+    name: req.body.name || user.name,
+    email: req.body.email || user.email,
+  };
+
+  // 🖼️ Step 3: Handle avatar upload using Cloudinary
+  if (req.file) {
+    // ✅ Step 3a: Delete old avatar from Cloudinary if exists
+    if (user.avatar?.public_id) {
+      await cloudinary.uploader.destroy(user.avatar.public_id);
+    }
+
+    // ✅ Step 3b: Set new avatar data from Cloudinary upload
+    updatedData.avatar = {
+      image: req.file.path,       // Cloudinary URL
+      public_id: req.file.filename, // Cloudinary public_id
+    };
+  }
+
+  // 🔄 Step 4: Update user in DB
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, updatedData, {
+    new: true,
+    runValidators: true,
+  });
+
+  // ✅ Step 5: Respond with updated info
   res.status(200).json({
     success: true,
     message: "User profile updated successfully",
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-    avatar: user.avatar,
-    role: user.role,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
+    _id: updatedUser._id,
+    name: updatedUser.name,
+    email: updatedUser.email,
+    avatar: updatedUser.avatar,
+    role: updatedUser.role,
+    createdAt: updatedUser.createdAt,
+    updatedAt: updatedUser.updatedAt,
   });
 });
+
 
 // @desc Get All Users
 // @route GET /api/auth/allProfile

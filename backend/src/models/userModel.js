@@ -23,21 +23,23 @@ const userSchema = new mongoose.Schema(
       select: false,
     },
     avatar: {
-      type: String,
-      
-      default:
-        "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
+      image: {
+        type: String,
+        default:
+          "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
+      },
+      public_id: {
+        type: String,
+        default: null, // Or you can leave it undefined by default
+      },
     },
+
     role: {
       type: String,
       default: "User",
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
-    
-    
-    
-    
   },
   {
     timestamps: true,

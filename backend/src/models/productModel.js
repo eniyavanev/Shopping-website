@@ -32,6 +32,10 @@ const productSchema = new mongoose.Schema(
           type: String,
           required: true,
         },
+        public_id: {
+          type: String,
+          required: true, // Cloudinary public ID for deletion
+        },
       },
     ],
     category: {
@@ -76,7 +80,7 @@ const productSchema = new mongoose.Schema(
     reviews: [
       // all reviews
       {
-        user:{
+        user: {
           type: mongoose.Schema.Types.ObjectId,
           required: true,
           ref: "User",
