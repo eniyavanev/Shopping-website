@@ -1,6 +1,7 @@
 const Product = require("../models/productModel.js");
 const asyncHandler = require("express-async-handler");
 const ApiFeautures = require("../../Utils/apiFeautures.js");
+const cloudinary = require("../../config/cloudinaryConfig.js");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -13,8 +14,9 @@ const createProduct = asyncHandler(async (req, res) => {
   let images = [];
   if (req.files.length > 0) {
     req.files.forEach((file) => {
-      let url = `${process.env.BACKEND_URL}/uploads/products/${file.filename}`;
-      images.push({ image: url });
+      // let url = `${process.env.BACKEND_URL}/uploads/products/${file.filename}`;
+       let url = file.path; 
+      images.push({ image: url, public_id: file.filename });
     });
   }
 
@@ -75,59 +77,74 @@ const getSingleProduct = asyncHandler(async (req, res, next) => {
 
 //Update product
 //PUT - /api/products/update/:id
+
 const updateProduct = asyncHandler(async (req, res) => {
+  // 🔍 Step 1: Get product from DB using ID
   const product = await Product.findById(req.params.id);
 
   if (!product) {
-    return res
-      .status(404)
-      .json({ success: false, message: "Product not found" });
-  }
-
-  // Parse oldImages from request body — it comes as JSON string of IDs or URLs user wants to keep
-  let oldImagesToKeep = [];
-  if (req.body.oldImages) {
-    try {
-      oldImagesToKeep = JSON.parse(req.body.oldImages);
-    } catch (err) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid oldImages format" });
-    }
-  }
-
-  // Filter existing product.images to keep only those in oldImagesToKeep (by id or url)
-  let updatedImages = product.images.filter((img) => {
-    // Assuming img._id or img.image (url) matches the ones sent by frontend
-    // Adjust this condition depending on what exactly frontend sends (IDs or URLs)
-    return (
-      oldImagesToKeep.includes(img._id?.toString()) ||
-      oldImagesToKeep.includes(img.image)
-    );
-  });
-
-  // Add new uploaded files, convert to URLs, and push
-  if (req.files && req.files.length > 0) {
-    req.files.forEach((file) => {
-      const url = `${process.env.BACKEND_URL}/uploads/products/${file.filename}`;
-      updatedImages.push({ image: url });
+    // ❌ If product not found, send 404 response
+    return res.status(404).json({
+      success: false,
+      message: "Product not found",
     });
   }
 
-  // Update req.body.images with updatedImages so Product.update uses it
-  req.body.images = updatedImages;
-
-  // Now update the product with all other fields from req.body
-  const updatedProduct = await Product.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    {
-      new: true,
-      runValidators: true,
-      useFindAndModify: false,
+  // 🧾 Step 2: Get oldImages list from frontend (string → array)
+  let oldImagesToKeep = [];
+  if (req.body.oldImages) {
+    try {
+      oldImagesToKeep = JSON.parse(req.body.oldImages); // string → array
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid oldImages format",
+      });
     }
+  }
+
+  // 🗑️ Step 3: Find images that were removed by user (not in oldImagesToKeep)
+  const removedImages = product.images.filter(
+    (img) =>
+      !oldImagesToKeep.includes(img._id?.toString()) && // _id comparison
+      !oldImagesToKeep.includes(img.image)              // URL comparison
   );
 
+  // 🔥 Step 4: Delete removed images from Cloudinary using their public_id
+  for (const img of removedImages) {
+    if (img.public_id) {
+      await cloudinary.uploader.destroy(img.public_id); // ✅ Delete from Cloudinary
+    }
+  }
+
+  // 🖼️ Step 5: Keep only the old images that user selected to retain
+  let updatedImages = product.images.filter(
+    (img) =>
+      oldImagesToKeep.includes(img._id?.toString()) ||
+      oldImagesToKeep.includes(img.image)
+  );
+
+  // 🆕 Step 6: Add newly uploaded images (from req.files) to updatedImages
+  if (req.files && req.files.length > 0) {
+    req.files.forEach((file) => {
+      updatedImages.push({
+        image: file.path,        // ✅ Cloudinary URL
+        public_id: file.filename // ✅ Needed for deleting later
+      });
+    });
+  }
+
+  // 📦 Step 7: Assign final image list to req.body for DB update
+  req.body.images = updatedImages;
+
+  // 🛠️ Step 8: Update the product with new data
+  const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,               // return the updated product
+    runValidators: true,     // apply Mongoose validation
+    useFindAndModify: false, // use modern Mongo driver
+  });
+
+  // ✅ Step 9: Send updated product as response
   res.status(200).json({
     success: true,
     message: "Product updated successfully",
@@ -137,17 +154,17 @@ const updateProduct = asyncHandler(async (req, res) => {
 
 //Delete product
 //DELETE - /api/products/delete/:id
-const deleteSingleProduct = asyncHandler(async (req, res) => {
-  const product = await Product.findByIdAndDelete(req.params.id);
-  if (!product) {
-    return res
-      .status(404)
-      .json({ success: false, message: "Product not found" });
-  }
-  res
-    .status(200)
-    .json({ success: true, message: "Product deleted successfully" });
-});
+// const deleteSingleProduct = asyncHandler(async (req, res) => {
+//   const product = await Product.findByIdAndDelete(req.params.id);
+//   if (!product) {
+//     return res
+//       .status(404)
+//       .json({ success: false, message: "Product not found" });
+//   }
+//   res
+//     .status(200)
+//     .json({ success: true, message: "Product deleted successfully" });
+// });
 
 //Create Review
 //PUT - /api/products/review
@@ -267,6 +284,34 @@ const deleteReview = asyncHandler(async (req, res, next) => {
     message: "Review deleted successfully",
   });
 });
+
+
+const deleteSingleProduct = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
+
+  if (!product) {
+    return res.status(404).json({
+      success: false,
+      message: "Product not found",
+    });
+  }
+
+  // 🔥 Delete all associated images from Cloudinary
+  for (const img of product.images) {
+    if (img.public_id) {
+      await cloudinary.uploader.destroy(img.public_id);
+    }
+  }
+
+  // ❌ Delete product from DB
+  await product.deleteOne();
+
+  res.status(200).json({
+    success: true,
+    message: "Product deleted successfully",
+  });
+});
+
 
 //@desc get Admin All Products
 // @route GET /api/admin/products
