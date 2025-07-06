@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
-import { useLogoutUserMutation } from "../../Pages/Redux/Slices/apiAuthSlice";
+import { useGetUserProfileQuery, useLogoutUserMutation } from "../../Pages/Redux/Slices/apiAuthSlice";
 import { removeUser } from "../../Pages/Redux/Slices/protectRouteSlice";
 import toast from "react-hot-toast";
 import SearchInput from "../Search/Search";
@@ -17,6 +17,12 @@ import { clearLoginModalSeen } from "../../Utils/modalHelper";
 
 const Header = () => {
   const user = useSelector((state) => state.protectRoute.user);
+  const ava = localStorage.getItem("userData");
+  
+  
+  
+  const { data: userProfile } = useGetUserProfileQuery(user?._id);
+  
   const { items } = useSelector((state) => state.cart.cart);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -112,7 +118,7 @@ const Header = () => {
                 <div className="relative w-10 h-10">
                   <img
                     src={
-                      user.avatar ||
+                      userProfile?.avatar.image ||
                       "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
                     }
                     alt="Profile"

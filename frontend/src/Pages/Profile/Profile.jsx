@@ -32,7 +32,7 @@ const Profile = () => {
         <div className="flex flex-col items-center">
           <img
             src={
-              user.avatar ||
+              user.avatar.image ||
               "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
             }
             alt="Profile"

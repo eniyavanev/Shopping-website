@@ -43,7 +43,8 @@ const Login = () => {
     try {
       // Call login API
       const res = await loginUser(formData).unwrap();
-
+         //console.log("res", res);
+         
       // Extract user data and dispatch to Redux store
       const userData = {
         _id: res._id,
