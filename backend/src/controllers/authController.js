@@ -226,7 +226,7 @@ const getUserProfile = asyncHandler(async (req, res, next) => {
     _id: user._id,
     name: user.name,
     email: user.email,
-    avatar: user.avatar,
+     avatar: user.avatar?.image || user.avatar,
   });
 });
 
@@ -308,7 +308,7 @@ const updateUserProfile = asyncHandler(async (req, res, next) => {
     _id: updatedUser._id,
     name: updatedUser.name,
     email: updatedUser.email,
-    avatar: updatedUser.avatar,
+    avatar: updatedUser.avatar?.image || updatedUser.avatar,
     role: updatedUser.role,
     createdAt: updatedUser.createdAt,
     updatedAt: updatedUser.updatedAt,
