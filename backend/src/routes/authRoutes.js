@@ -1,16 +1,16 @@
 const multer = require("multer");
 const path = require("path");
-
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, path.join(__dirname, "../../uploads/images"));
-    },
-    filename: (req, file, cb) => {
-      cb(null, `${Date.now()}-${file.originalname}`);
-    },
-  }),
-})
+const upload = require("../middleware/uploadMiddleware.js");
+// const upload = multer({
+//   storage: multer.diskStorage({
+//     destination: (req, file, cb) => {
+//       cb(null, path.join(__dirname, "../../uploads/images"));
+//     },
+//     filename: (req, file, cb) => {
+//       cb(null, `${Date.now()}-${file.originalname}`);
+//     },
+//   }),
+// })
 const {
   registerUser,
   loginUser,

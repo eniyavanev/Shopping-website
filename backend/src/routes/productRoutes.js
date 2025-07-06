@@ -14,17 +14,17 @@ const { checkToken, isAdmin } = require("../middleware/tokenAuthentication.js");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");
-
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, path.join(__dirname, "../../uploads/products"));
-    },
-    filename: (req, file, cb) => {
-      cb(null, `${Date.now()}-${file.originalname}`);
-    },
-  }),
-});
+const upload = require("../middleware/uploadMiddleware.js");
+// const upload = multer({
+//   storage: multer.diskStorage({
+//     destination: (req, file, cb) => {
+//       cb(null, path.join(__dirname, "../../uploads/products"));
+//     },
+//     filename: (req, file, cb) => {
+//       cb(null, `${Date.now()}-${file.originalname}`);
+//     },
+//   }),
+// });
 
 //Admin routes
 router
@@ -39,16 +39,15 @@ router
 router
   .route("/admin/Reviews")
   .delete(checkToken, isAdmin("admin"), deleteReview);
-  router
+router
   .route("/admin/Reviews")
-  .get(checkToken,isAdmin("admin"), getSingleProductReviews);
+  .get(checkToken, isAdmin("admin"), getSingleProductReviews);
 
 router
   .route("/admin/products")
   .get(checkToken, isAdmin("admin"), getProductsAdmin);
 
-
-  //public routes
+//public routes
 router.route("/get").get(getProducts);
 router.route("/get/:id").get(getSingleProduct);
 
